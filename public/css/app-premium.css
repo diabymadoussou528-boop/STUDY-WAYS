@@ -1,0 +1,152 @@
+/* ================================================================
+   STUDYWAYS — Premium App Shell (Student / Teacher dashboards)
+   Harmonized with admin premium + logo identity
+   ================================================================ */
+
+body.app-premium {
+    background: var(--sw-bg);
+    font-family: var(--sw-font);
+}
+
+body.app-premium .wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+body.app-premium .sidebar {
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid var(--sw-border);
+    margin: 12px 0 12px 12px;
+    min-height: calc(100vh - 24px);
+    height: calc(100vh - 24px);
+    border-radius: var(--sw-radius-xl);
+    box-shadow: var(--sw-shadow-md);
+}
+
+body.app-premium .sidebar::before {
+    display: none;
+}
+
+body.app-premium .sidebar-header {
+    border-bottom: 1px solid var(--sw-border);
+    padding: 20px 18px;
+}
+
+body.app-premium .sidebar-user {
+    margin: 0 14px;
+    padding: 14px;
+    border-radius: var(--sw-radius-md);
+    background: var(--sw-bg-muted);
+    border: 1px solid var(--sw-border);
+}
+
+body.app-premium .sidebar-section-title {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--sw-text-dim);
+    padding: 16px 20px 6px;
+}
+
+body.app-premium .sidebar-link {
+    margin: 2px 10px;
+    padding: 11px 14px;
+    border-radius: var(--sw-radius-md);
+    color: var(--sw-text-secondary);
+    font-weight: 500;
+    transition: all var(--sw-duration) var(--sw-ease);
+}
+
+body.app-premium .sidebar-link:hover {
+    background: var(--sw-primary-soft);
+    color: var(--sw-primary);
+    transform: translateX(2px);
+}
+
+body.app-premium .sidebar-link.active {
+    background: linear-gradient(135deg, var(--sw-primary), var(--sw-primary-dark));
+    color: var(--sw-white);
+    box-shadow: var(--sw-shadow-brand-sm);
+}
+
+body.app-premium .sidebar-link-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--sw-radius-sm);
+    background: var(--sw-bg-muted);
+    color: var(--sw-text-muted);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--sw-duration), color var(--sw-duration);
+}
+
+body.app-premium .sidebar-link:hover .sidebar-link-icon {
+    background: rgba(139, 32, 50, 0.1);
+    color: var(--sw-primary);
+}
+
+body.app-premium .sidebar-link.active .sidebar-link-icon {
+    background: rgba(255, 255, 255, 0.18);
+    color: var(--sw-white);
+}
+
+body.app-premium .theme-toggle-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--sw-border);
+    background: var(--sw-bg-muted);
+    color: var(--sw-text-muted);
+}
+
+body.app-premium .theme-toggle-btn:hover {
+    background: var(--sw-primary-soft);
+    border-color: rgba(139, 32, 50, 0.2);
+    color: var(--sw-primary);
+    transform: scale(1.05);
+}
+
+body.app-premium .content {
+    padding: 12px 12px 12px 0;
+}
+
+body.app-premium .section-card,
+body.app-premium .stat-card {
+    border: 1px solid var(--sw-border);
+    box-shadow: var(--sw-shadow-sm);
+    border-radius: var(--sw-radius-lg);
+    transition: transform var(--sw-duration) var(--sw-ease), box-shadow var(--sw-duration);
+}
+
+body.app-premium .section-card:hover,
+body.app-premium .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sw-shadow-md);
+}
+
+body.app-premium .flash-toast {
+    border-radius: var(--sw-radius-md);
+    box-shadow: var(--sw-shadow-md);
+}
+
+body.app-premium .topbar-btn {
+    border-radius: var(--sw-radius-md);
+    transition: all var(--sw-duration) var(--sw-ease);
+}
+
+body.app-premium .topbar-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--sw-shadow-sm);
+}
+
+@media (max-width: 900px) {
+    body.app-premium .sidebar {
+        margin: 0;
+        border-radius: 0;
+        height: 100vh;
+        min-height: 100vh;
+    }
+}

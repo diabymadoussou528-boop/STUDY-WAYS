@@ -1,0 +1,137 @@
+.profile-grid {
+    display: grid;
+    grid-template-columns: minmax(280px, 340px) 1fr;
+    gap: 22px;
+    align-items: start;
+    padding: 0 24px 24px;
+}
+
+.profile-page-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: 0 24px 24px;
+}
+
+.profile-avatar-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: 8px;
+}
+
+.avatar-upload-preview-wrap {
+    margin-bottom: 20px;
+}
+
+.avatar-upload-ring {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    padding: 4px;
+    background: linear-gradient(135deg, #8b2032, #c44d62);
+    box-shadow: 0 12px 32px rgba(139, 32, 50, 0.25);
+}
+
+.avatar-upload-preview {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    display: block;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.avatar-upload-loading {
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8b2032;
+    font-size: 1.5rem;
+}
+
+.avatar-upload-loading[hidden] {
+    display: none !important;
+}
+
+.avatar-upload-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.avatar-upload-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.avatar-upload-hint {
+    margin-top: 14px;
+    font-size: 0.8125rem;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+.profile-info-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 480px;
+}
+
+.avatar-upload.is-uploading .avatar-upload-preview {
+    opacity: 0.5;
+}
+
+.temp-password-field {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+    max-width: 520px;
+}
+
+.temp-password-field .modern-input {
+    flex: 1;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    letter-spacing: 0.04em;
+    background: #faf9fb;
+    cursor: default;
+}
+
+.temp-password-field .btn-copy.is-copied {
+    background: #ecfdf5;
+    border-color: #10b981;
+    color: #059669;
+}
+
+.temp-password-notice {
+    margin-top: 10px;
+    font-size: 0.8125rem;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@media (max-width: 900px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-page-wrap {
+        padding: 0 16px 16px;
+    }
+}

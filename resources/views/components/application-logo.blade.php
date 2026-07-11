@@ -1,0 +1,1 @@
+<x-sw-brand {{ $attributes }} />

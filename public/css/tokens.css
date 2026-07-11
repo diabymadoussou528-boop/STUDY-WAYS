@@ -1,0 +1,74 @@
+/* ================================================================
+   STUDYWAYS — Design Tokens (single source of truth)
+   Burgundy #8B2032 · White · Black
+   ================================================================ */
+
+:root {
+    /* Brand */
+    --sw-primary:          #8B2032;
+    --sw-primary-light:    #a82841;
+    --sw-primary-dark:     #6b1826;
+    --sw-primary-deep:     #4a1018;
+    --sw-primary-soft:     rgba(139, 32, 50, 0.08);
+    --sw-primary-glow:     rgba(139, 32, 50, 0.22);
+
+    /* Surfaces */
+    --sw-white:            #ffffff;
+    --sw-bg:               #faf9fb;
+    --sw-bg-muted:         #f3f4f7;
+    --sw-bg-elevated:      #ffffff;
+
+    /* Text */
+    --sw-text:             #111827;
+    --sw-text-secondary:   #374151;
+    --sw-text-muted:       #6b7280;
+    --sw-text-dim:         #9ca3af;
+
+    /* Borders & shadows */
+    --sw-border:           rgba(0, 0, 0, 0.08);
+    --sw-border-strong:    rgba(0, 0, 0, 0.12);
+    --sw-shadow-xs:        0 1px 3px rgba(0, 0, 0, 0.04);
+    --sw-shadow-sm:        0 4px 14px rgba(0, 0, 0, 0.06);
+    --sw-shadow-md:        0 8px 28px rgba(0, 0, 0, 0.08);
+    --sw-shadow-lg:        0 20px 50px rgba(0, 0, 0, 0.10);
+    --sw-shadow-brand:     0 6px 20px rgba(139, 32, 50, 0.28);
+    --sw-shadow-brand-sm:  0 4px 12px rgba(139, 32, 50, 0.22);
+
+    /* Radii — squircle-inspired */
+    --sw-radius-sm:        10px;
+    --sw-radius-md:        14px;
+    --sw-radius-lg:        20px;
+    --sw-radius-xl:        24px;
+    --sw-radius-icon:      12px;
+    --sw-radius-pill:      9999px;
+
+    /* Typography */
+    --sw-font:             'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+    /* Motion */
+    --sw-ease:             cubic-bezier(0.4, 0, 0.2, 1);
+    --sw-ease-spring:      cubic-bezier(0.34, 1.56, 0.64, 1);
+    --sw-ease-out:         cubic-bezier(0.16, 1, 0.3, 1);
+    --sw-duration:         0.25s;
+    --sw-duration-slow:    0.4s;
+
+    /* Legacy aliases (backward compat) */
+    --primary:             var(--sw-primary);
+    --primary-light:       var(--sw-primary-light);
+    --primary-dark:        var(--sw-primary-dark);
+    --primary-soft:        var(--sw-primary-soft);
+    --clr-primary:         var(--sw-primary);
+    --text:                var(--sw-text);
+    --border:              var(--sw-border);
+}
+
+[data-theme="dark"] {
+    --sw-bg:               #060606;
+    --sw-bg-muted:         #111111;
+    --sw-bg-elevated:      #161616;
+    --sw-text:             #f2f2f2;
+    --sw-text-secondary:   #d1d5db;
+    --sw-text-muted:       #9ca3af;
+    --sw-border:           rgba(255, 255, 255, 0.08);
+    --sw-shadow-sm:        0 4px 16px rgba(0, 0, 0, 0.4);
+}

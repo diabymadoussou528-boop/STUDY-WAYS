@@ -1,0 +1,170 @@
+/* ================================================================
+   STUDYWAYS — Unified Brand (Home page lockup)
+   STUDY serif + graduation cap + Ways script
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Playfair+Display:wght@700;800;900&display=swap');
+
+/* ── Wrapper ── */
+.sw-brand {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    min-width: 0;
+    text-decoration: none;
+    color: inherit;
+    line-height: 1;
+}
+
+a.sw-brand {
+    transition: transform var(--sw-duration-slow, 0.4s) var(--sw-ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1));
+}
+
+a.sw-brand:hover {
+    transform: scale(1.04);
+}
+
+a.sw-brand:hover .brand-cap {
+    transform: rotate(-15deg) translateY(-2px);
+}
+
+.sw-brand--center {
+    justify-content: center;
+}
+
+/* ── Fade-in on load ── */
+@keyframes sw-brand-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.sw-brand-fade-in {
+    animation: sw-brand-fade-in 0.65s var(--sw-ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+
+a.sw-brand.sw-brand-fade-in:hover {
+    transform: scale(1.04);
+}
+
+/* ── Core lockup (matches Home) ── */
+.brand-mark {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    line-height: 1;
+    padding-top: 14px;
+    transition: transform var(--sw-duration-slow, 0.4s) var(--sw-ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1));
+}
+
+.brand-study {
+    position: relative;
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--sw-primary, #8B2032);
+}
+
+.brand-cap {
+    position: absolute;
+    top: -0.6em;
+    right: -0.2em;
+    font-size: 0.72em;
+    color: var(--sw-primary, #8B2032);
+    transform: rotate(-15deg);
+    filter: drop-shadow(0 2px 4px rgba(139, 32, 50, 0.25));
+    transition: transform var(--sw-duration-slow, 0.4s) var(--sw-ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1));
+}
+
+.brand-ways {
+    align-self: flex-end;
+    margin-top: -0.2em;
+    margin-right: -0.05em;
+    font-family: 'Dancing Script', cursive;
+    font-weight: 700;
+    line-height: 0.7;
+    color: var(--sw-primary, #8B2032);
+}
+
+/* ── Sizes ── */
+.sw-brand--sm .brand-study { font-size: 1.15rem; }
+.sw-brand--sm .brand-ways { font-size: 1.55rem; }
+.sw-brand--sm .brand-mark { padding-top: 10px; }
+
+.sw-brand--md .brand-study { font-size: 1.45rem; }
+.sw-brand--md .brand-ways { font-size: 1.9rem; }
+
+.sw-brand--lg .brand-study { font-size: 1.9rem; }
+.sw-brand--lg .brand-ways { font-size: 2.5rem; }
+
+.sw-brand--xl .brand-study { font-size: 2.1rem; }
+.sw-brand--xl .brand-ways { font-size: 2.85rem; }
+
+/* ── Variants ── */
+.sw-brand--on-dark .brand-study,
+.sw-brand--on-dark .brand-cap,
+.sw-brand--on-dark .brand-ways,
+.sw-brand--sidebar-dark .brand-study,
+.sw-brand--sidebar-dark .brand-cap,
+.sw-brand--sidebar-dark .brand-ways,
+.sw-brand--footer .brand-study,
+.sw-brand--footer .brand-cap,
+.sw-brand--footer .brand-ways {
+    color: #ffffff;
+}
+
+.sw-brand--on-dark .brand-cap,
+.sw-brand--sidebar-dark .brand-cap {
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+}
+
+.sw-brand--footer .brand-study { font-size: 1.45rem; }
+.sw-brand--footer .brand-ways { font-size: 1.9rem; }
+
+.sw-brand--auth .brand-study { font-size: 2.1rem; }
+.sw-brand--auth .brand-ways { font-size: 2.85rem; }
+
+.sw-brand--card .brand-study { font-size: 1.35rem; }
+.sw-brand--card .brand-ways { font-size: 1.8rem; }
+
+/* ── Collapsed admin sidebar ── */
+.sidebar-collapsed .sw-brand .brand-mark {
+    transform: scale(0.52);
+    transform-origin: center center;
+}
+
+.sidebar-collapsed .sidebar-brand-link {
+    justify-content: center;
+    width: 100%;
+}
+
+/* ── Legacy aliases (dashboard sidebar) ── */
+.sidebar-brand-link {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    text-decoration: none;
+}
+
+/* Hide legacy icon+text branding */
+.sidebar-brand-icon,
+.sidebar-brand-text,
+.sidebar-logo {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .sw-brand--lg .brand-study { font-size: 1.45rem; }
+    .sw-brand--lg .brand-ways { font-size: 1.9rem; }
+}
+
+@media (max-width: 480px) {
+    .sw-brand--md .brand-study { font-size: 1.25rem; }
+    .sw-brand--md .brand-ways { font-size: 1.65rem; }
+}

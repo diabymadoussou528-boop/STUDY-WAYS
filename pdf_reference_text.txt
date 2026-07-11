@@ -1,0 +1,910 @@
+--- PAGE 1 ---
+  
+ 1 
+REPUBLIQUE DU MALI                       MINISTERE DE L’EDUCATION NATIONALE  
+UN PEUPLE – UN BUT – UNE FOI                                    ET DE L’ENSEIGNEMENT SUPERIEUR  
+ 
+ 
+                                                                                                                 
+ 
+INSTITUT AFRICAIN DE MANAGEMENT  
+ 
+TRA V AIL D’INITIATION À LA DÉMARCHE PROFESSIONNELLE   
+ 
+INTITULÉ :  
+ASYOU 
+ 
+DANS LE CADRE DE V ALIDATION DU WEBSITE CHALLENGE   
+EN BIG 1  
+ENCADREUR :  Mamadou SANGARE                                   Date : 01/07/2025                                                                                                                   
+Contact : 66-61-36-05                                                Année scolaire : 20242025 
+Présenté par : 
+Madoussou Aliou DIABY 
+Aminata SANGARE 
+Alhassane MAGASSOUBA 
+Mohamed MAIGA 
+Adama SANGARE 
+Issiaka BENGALY 
+ 
+
+
+--- PAGE 2 ---
+  
+ 2 
+REPUBLIQUE DU MALI                       MINISTERE DE L’EDUCATION NATIONALE  
+UN PEUPLE – UN BUT – UNE FOI                                    ET DE L’ENSEIGNEMENT SUPERIEUR  
+                                                                                                                 
+ 
+INSTITUT AFRICAIN DE MANAGEMENT  
+ 
+PROJET PROFESSIONNEL PRÉSENTÉ ET SOUTENU  
+Par :  
+Madoussou Aliou DIABY 
+Aminata SANGARE 
+Alhassane MAGASSOUBA 
+Mohamed MAIGA 
+Adama SANGARE 
+Issiaka BENGALY 
+ 
+ 
+POUR L’OBTENTION DE LA LICENCE PROFESSIONNELLE EN INFORMATIQUE  
+  
+ENCADREUR :  Mamadou SANGARE                                   Date : 01/07/2025                                                                                                                   
+Contact : 66-61-36-05                                                Année scolaire : 20242025 
+
+
+--- PAGE 3 ---
+  
+ 3 
+Dédicace : 
+ "À nos familles, pour leur amour et leur patience, et à nos amis, pour leur soutien 
+constant." 
+
+--- PAGE 4 ---
+  
+ 4 
+Remerciments 
+Avant de présenter ce projet, nous souhaitons exprimer notre sincère gratitude à tous ceux qui 
+nous ont soutenus durant cette belle aventure. 
+Merci à nos familles pour leur amour, leur patience et leur présence constante. Merci également 
+à l’équipe pédagogique de l’Institut Africain de Management et aux intervenants de la filière 
+Informatique de Gestion pour leur accompagnement et leur dévouement. 
+Nous adressons une mention spéciale à Monsieur Sangaré et Monsieur Anselme MOUKORO, 
+pour leurs conseils précieux, leur disponibilité et leur bienveillance, sans lesquels ce projet 
+n’aurait pu aboutir. 
+Un proverbe africain  dit « Seul, on va plus vite ; ensemble, on va plus loin. »  
+
+--- PAGE 5 ---
+  
+ 5 
+Sigles et Abréviations 
+ 
+API Application Programming Interface 
+CMS 
+ 
+Content Management System 
+ 
+CSS 
+ 
+Cascading Style Sheets 
+ 
+HTML 
+ 
+ 
+HyperText Markup Language 
+ 
+IAM INSTITUT AFRICAIN DE MANAGEMENT 
+ 
+PME Petite et Moyenne Entreprise 
+PWA  Progressive Web App 
+UI/UX Interface Utilisateur/Expérience Utilisateur 
+
+--- PAGE 6 ---
+  
+ 6 
+Listes des Schémas et Graphiques 
+o Schéma 1 : Sigles et Abréviations-p.5 
+o Schéma 2 : Environnement de développement -p.14 
+o Schéma 3  : Arborescence du projet-p.15-p.17 
+o Schéma 4 : Analyse des Résultats et Discussion.p-20  
+o Schéma 5: Page d’accueil du site ASYOU.p-27  
+o Schéma 6 : Boutique ASYOU.p-32 
+o Schéma 7 :Page article homme.p-33  
+o Schéma 8 :Page article femme.p-36  
+o Schéma 9 :Page contact.p-37 
+o Schéma 10 : code JS cart.p-40 
+
+--- PAGE 7 ---
+  
+ 7 
+Sommaire 
+Introduction  ...................................................................... Erreur ! Signet non défini.8 
+Partie I : Cadre Théorique et 
+Conceptuel………………………..................................Erreur ! Signet non défini.9 
+ 
+Chapitre 1 : Contexte et Objectifs .................................................................................... 9  
+Section1 : Présentation du Contexte et de l’IAM...............................................................9  
+Section2 : Définition des Objectifs et Justification ............................................................9  
+Chapitre 2 : Revue de la Littérature .......................................................………................... 10  
+Introduction………………………………………………………………………………………………………………...…10  
+2.1 Concepts Théoriques Clés ............................................................................................ 10  
+2.2 Analyse des Travaux Existants .....................................................................................  10  
+2.3 Positionnement de Notre Travail .................................................................................  11  
+Partie II : Cadre Pratique et Applicative…………………………………………………….………………... 12 
+Chapitre 3 : Méthodologie et Conception ........................................................................ 12  
+3.1 Méthodologie Objectif   ………......................................................................................12  
+3.2 Conception Technique Objectif.................................................................................... 12  
+3.3 Difficultés Rencontrées ............................................................................................... 18 
+Chapitre 4 : Réalisation et Résultats ..................................................................................17 
+4.1 Mise en Œuvre de la solution....................................................................................... 17 
+Section2 : Analyse des Résultats et Discussion .................................................................18 
+Resumé..................................................................................................................................20 
+Abstract................................................................................................................................. 21  
+Conclusion ............................................................................................................ 22  
+Perspectives ................................................................…………………................…..........  23  
+Bibliographie /Webographie ...............................................................................................  24 
+Annexes ................................................................................................................... ..........  25 
+Formatage .................................................................................. ......................................... 43  
+ 
+
+--- PAGE 8 ---
+  
+ 8 
+Introduction 
+Dans un contexte où la digitalisation du commerce est en forte croissance, la présence en ligne 
+devient indispensable pour les entreprises souhaitant élargir leur audience et rester compétitives. 
+Ce projet s’inscrit dans cette dynamique avec la création d e notre  site e -commerce nommé 
+“ASYOU”, dédié à la mode. 
+L’idée naît d’un double constat : de nombreuses petites marques manquent de solution web 
+professionnelle, et les CMS comme Shopify ou WordPress sont parfois coûteux ou peu adaptés aux 
+débutants en développement. Ainsi, l’objectif est de concevoir un site e -commerce entièrement 
+codé à la main (sans CMS ni Framework), utilisant uniquement HTML, CSS et JS. Le site se veut 
+responsive, fluide et fonctionnel, intégrant des fonctionnalités essentielles : navigation  par 
+catégories, affichage des produits, gestion de panier, témoignages, et formulaire de contact. 
+Ce projet vise à offrir une solution accessible, personnalisable et légère, tout en permettant de 
+renforcer les compétences techniques en développement front-end. Il démontre également qu’il est 
+possible de créer un site professionnel avec des outils simples. 
+Ce rapport est structuré en deux parties : 
+• La première partie, théorique, présente les notions clés du e-commerce, les bonnes pratiques 
+en UI/UX, et les technologies utilisées. 
+• La seconde partie, pratique, décrit la méthodologie de développement, la réalisation du site, 
+l’analyse des fonctionnalités intégrées, ainsi que les tests effectués. 
+
+--- PAGE 9 ---
+  
+ 9 
+ 
+Partie I : Cadre Théorique et Conceptuel 
+Chapitre 1 : Contexte et Objectifs  
+Section 1 : Présentation du Contexte et de l’IAM 
+Avec l’essor des technologies de l’information et de la communication (TIC), les entreprises 
+doivent adapter leurs modes d’interaction avec les clients. L’informatique est aujourd’hui un outil 
+stratégique, notamment à travers les plateformes web et le e -commerce, devenu incontournable 
+face aux nouvelles habitudes de consommation. 
+Dans ce contexte, le commerce en ligne offre aux entreprises – même de petite taille – la possibilité 
+de vendre en continu, d’élargir leur audience et de personnaliser l’expérience client. Pourtant, au 
+Mali, de nombreuses PME et jeunes marques n’ont pas ac cès à des solutions web adaptées, en 
+raison d’un manque de moyens ou de compétences techniques. Ce frein nuit à leur croissance et à 
+leur visibilité. 
+Ce projet vise ainsi à créer un site e -commerce simple et efficace, basé uniquement sur HTML, 
+CSS et JavaScript, pour proposer une solution accessible, personnalisable et sans CMS. 
+Ce travail s’inscrit dans le cadre de la formation en Informatique de Gestion de l’Institut Africain 
+de Management (IAM), une école reconnue pour son approche équilibrée entre théorie et pratique. 
+L’IAM encourage les projets concrets dès la Licence pour fo rmer des professionnels capables de 
+relever les défis numériques. 
+Ce site e-commerce représente donc une application concrète des compétences acquises à l’IAM, 
+tout en répondant à un besoin réel dans l’écosystème entrepreneurial malien. 
+Section 2 : Définition des Objectifs et Justification  
+L’objectif général de ce projet est de concevoir un site e -commerce vitrine permettant à la 
+marque ASYOU ( vêtements et d’accessoires ) de proposer ses produits en ligne de façon 
+intuitive et professionnelle, en utilisant uniquement HTML, CSS et JS, sans dépendre de 
+solutions externes comme les CMS ou les serveurs back-end. 
+Plus spécifiquement, il s’agit de : 
+• Permettre aux utilisateurs de naviguer librement entre les différentes sections du site 
+(accueil, boutique, contact, témoignages, panier) 
+• Mettre en place une interface de présentation claire et attrayante des produits 
+• Intégrer un panier fonctionnel en JavaScript pour permettre aux clients de sélectionner leurs 
+articles 
+
+--- PAGE 10 ---
+  
+ 10 
+• Une section « Témoignages » pour afficher les avis clients et renforcer la confiance 
+• Organiser les produits par catégories et faciliter la recherche grâce à une navigation fluide 
+• Assurer la compatibilité du site sur divers supports (ordinateur, tablette, mobile), sans base 
+de données ni hébergement complexe 
+Ce projet prend tout son sens dans un contexte où de nombreuses petites entreprises 
+souhaitent disposer d’un outil numérique simple, économique et personnalisable pour 
+valoriser leur offre en ligne. Il vise à fournir une solution concrète, adaptée aux contraintes 
+locales, et à démontrer qu’un site efficace peut être développé avec des technologies de 
+base, tout en garantissant une bonne expérience utilisateur. 
+Chapitre 2 : Revue de la Littérature  
+Introduction  
+Ce chapitre établit les bases théoriques nécessaires à la conception d’un site e -commerce. 
+Il présente les concepts clés, analyse des projets existants et justifie les choix techniques 
+adoptés pour le projet “ASYOU”. 
+2.1. Concepts théoriques clés 
+1. E-commerce : Ensemble des transactions commerciales réalisées en ligne (B2B, B2C, 
+C2C), avec une disponibilité 24h/24 et des coûts réduits. 
+2. Développement web : Utilisation de HTML (structure), CSS (mise en forme) et 
+JS(interactivité) pour construire des interfaces utilisateur. 
+3. Responsive Design : Adaptation automatique du site à tous types d’écrans grâce à des 
+techniques comme Flexbox ou CSS Grid ou . 
+4. UX (Expérience Utilisateur) : Qualité de l’interaction entre l’utilisateur et le site 
+(ergonomie, clarté, vitesse, esthétique). 
+5. LocalStorage : Mécanisme de stockage local des données (ex. : panier) sans base de 
+données. 
+2.2. Analyse des Travaux Existants 
+1. Shein (www.shein.com) 
+o Points forts : 
+• Interface moderne et intuitive 
+• Produits bien organisés 
+• Moteur de recherche performant 
+o Limite : Architecture basée sur un back-end complexe, difficile à reproduire dans 
+un projet 100 % front-end sans framework ni base de données. 
+
+--- PAGE 11 ---
+  
+ 11 
+2. Projet étudiant : E-shop (Université Paris-Saclay, 2020) 
+o Points forts : 
+• Panier fonctionnant avec LocalStorage 
+• Affichage dynamique via JavaScript 
+• Design responsive réalisé sans framework 
+o Limite : Absence de section témoignages et de formulaire de contact, ce qui limite 
+l’interaction utilisateur. 
+3. Tutoriel OpenClassrooms : Créer un site e-commerce 
+o Points forts : 
+• Design responsive avec Flexbox 
+• Navigation claire 
+o Limite : Panier non sauvegardé localement et certaines fonctionnalités comme la 
+validation de formulaire sont simplifiées. 
+2.3. Positionnement du projet “ASYOU” 
+Le projet “ASYOU” se positionne comme une solution intermédiaire, entre projets simples 
+et plateformes complexes. Il cible les PME, créateurs de mode locaux et auto-entrepreneurs 
+avec une approche : 
+• 100 % front-end sans CMS ni framework ; 
+• Interface responsive et intuitive ; 
+• Panier dynamique avec LocalStorage ; 
+• Section témoignages animée ; 
+• Formulaire de contact fonctionnel, sans base de données. 
+ASYOU se veut : 
+• Pédagogique : entièrement codé manuellement ; 
+• Accessible : sans dépendances techniques lourdes ; 
+• Pertinent : adapté au contexte africain, en particulier malien. 
+
+--- PAGE 12 ---
+  
+ 12 
+ 
+Partie II : Cadre pratique ou applicative 
+Chapitre 3 : Méthodologie et Conception  
+3.1 Méthodologie 
+Nous avons choisi une méthode expérimentale, orientée vers le développement itératif et les tests 
+utilisateurs à petite échelle. 
+Les étapes ont été : 
+1. Identification des besoins fonctionnels (produits, panier, contact, témoignages), 
+2. Conception et prototypage rapide (maquettes sur papier), 
+3. Développement progressif (page par page), 
+4. Tests  (avec les membres du groupe ). 
+ Collecte de données 
+Nous avons procéder  à des questionnaires sur les besoins des utilisateurs : 
+• Quelques étudiants non développeurs. 
+Cela nous a permis d’identifier des attentes clés : 
+• Simplicité de navigation, 
+• Accessibilité mobile, 
+• Mise en avant claire des produits, 
+• Présence d’un panier. 
+Cette méthode convient parfaitement à un projet éducatif à court terme car : 
+• Elle favorise l’autonomie, 
+• Elle permet une construction incrémentale, 
+• Elle s’adapte bien à l’absence de back-end. 
+ 3.2 Conception Technique 
+Le site repose sur une architecture client-only, de type statique, dans laquelle tout le traitement se 
+fait côté client (navigateur), sans serveur, ni base de données. Le stockage temporaire se fait via 
+l’API localStorage. 
+
+--- PAGE 13 ---
+  
+ 13 
+ Architecture : 
+• Type : Front-end pur (client-side) 
+• Modèle : Pages statiques reliées (HTML multi-pages) 
+• Persistance : localStorage (panier) 
+ 
+Environnement de développement 
+Composant 
+Fontawesome,Boxicons 
+HTML, CSS, JavaScript 
+CCC  
+Visual Studio Code
+C
+ 
+Outils utilisés 
+Google Chrome, Microsoft 
+Edge, Avast Secure Browser 
+Langages utilisés 
+Bibliothèques d’icônes 
+Navigateurs pour les tests 
+Editeur 
+
+--- PAGE 14 ---
+  
+ 14 
+ 
+Arborescence du projet : 
+ASYOU/ 
+├── css/ 
+│   ├── blog.css 
+│   ├── cart.css 
+│   ├── contact.css 
+│   ├── faq.css 
+│   ├── men.css 
+│   ├── shop.css 
+│   ├── size-guide.css 
+│   ├── style.css 
+│   └── women.css 
+│ 
+├── js/ 
+│   ├── blog.js 
+│   ├── cart.js 
+│   ├── faq.js 
+│   ├── index.js 
+│   ├── main.js 
+│   ├── size-guide.js 
+│   ├── testimonials.js 
+│   └── women.js 
+ 
+
+--- PAGE 15 ---
+  
+ 15 
+ 
+├── IMAGES/ 
+│   ├── ABAYA/ 
+│   ├── access/ 
+│   ├── BIJOUX/ 
+│   ├── blass/ 
+│   ├── blasser/ 
+│   ├── cargo/ 
+│   ├── chauss/ 
+│   ├── CHOES/ 
+│   ├── client/ 
+│   ├── femme/ 
+│   ├── foulards/ 
+│   ├── haut/ 
+│   ├── homme/ 
+│   ├── Jogo/ 
+│   ├── jupe/ 
+│   ├── lunettes/ 
+│   ├── pantalon/ 
+│   ├── Payment-logo/ 
+│   ├── PHONECASES/ 
+│   ├── polooo/ 
+│   ├── qamis/ 
+│   ├── robe/ 
+│   ├── sac/ 
+│   └── vestes/ 
+ 
+
+--- PAGE 16 ---
+  
+ 16 
+ 
+├── PAGES/ 
+│   ├── about.html 
+│   ├── blog.html 
+│   ├── cart.html 
+│   ├── contact.html 
+│   ├── faq.html 
+│   ├── index.html 
+│   ├── shop.html 
+│   ├── size-guide.html 
+│   ├── categories/ 
+│   ├── men_qamis.html 
+│   ├── men-accessoires.html 
+│   ├── men-chaussures.html 
+│   ├── men-chemises.html 
+│   ├── men-costumes.html 
+│   ├── men-pantalons.html 
+│   ├── men-sport.html 
+│   ├── men-street.html 
+│   ├── men-tshirts.html 
+│   └── Men.html 
+│   ├── women-abaya.html 
+│   ├── women-accessoires.html 
+│   ├── women-blasers.html 
+│   ├── women-chaussures.html 
+│   ├── women-ete.html 
+│   ├── women-foulards.html 
+│   ├── women-haut.html 
+│   ├── women-jupes.html 
+│   ├── women-pantalon.html 
+│   ├── women-robes.html 
+│   ├── women-sac.html 
+│   ├── women-set.html 
+│   ├── women-top-bas.html 
+│   └── Women.html 
+ 
+ 
+
+--- PAGE 17 ---
+  
+ 17 
+Fonctionnement du panier : 
+• Les produits sont affichés dynamiquement avec JavaScript. 
+• Lorsqu’un produit est ajouté, ses données sont stockées dans localStorage. 
+• Le panier est consultable via la page panier.html, avec possibilité de suppression. 
+3.3 Difficultés rencontrées et solutions apportées 
+Problème 1 : Gestion du panier sans base de données 
+Le défi principal était de stocker les produits sans base de données. 
+ Solution : Utilisation de l’API localStorage pour simuler une base locale dans le navigateur. 
+Problème 2 : Adaptation mobile 
+Le site s’affichait mal sur petits écrans au début. 
+Solution : Mise en place de media queries et utilisation de Flexbox pour un design responsive. 
+ Problème 3 : Témoignages interactifs 
+Les témoignages ne défilaient pas correctement au début. 
+Solution : Refactorisation du JavaScript avec des fonctions de  defilement manuel (flèches). 
+La mise en œuvre du projet "ASYOU" s’est appuyée sur une méthode agile, avec des cycles courts 
+permettant une progression continue. Les choix techniques faits (HTML/CSS/JS + localStorage) 
+ont permis de développer un prototype fonctionnel, moderne et accessible, adapté à un contexte 
+local et aux ressources limitées. 
+Chapitre 4 : Réalisation et Résultats 
+4.1 : Mise en Œuvre de la Solution 
+Environnement de Développement 
+Le développement du site s’est effectué en local sur Visual Studio Code, sans serveur externe ni 
+base de données. Le projet repose entièrement sur les langages HTML, CSS et JavaScript. Aucune 
+maquette de départ n’a été utilisée, le design a été construit au fil du développement. 
+• Langages utilisés : HTML, CSS,  JS 
+• Bibliothèques : 
+o FontAwesome (pour les icônes) 
+
+--- PAGE 18 ---
+  
+ 18 
+o BoxIcons (icônes modernes et personnalisables) 
+• Navigateurs de test : 
+o Google Chrome 
+o Microsoft Edge 
+o Avast Secure Browser 
+Structure du projet 
+L’organisation du projet suit une architecture simple et modulaire : 
+• PAGES/ : toutes les pages du site (accueil, produit, contact, etc.) 
+• css/ : fichiers de styles (par section ou par page) 
+• js/ : fichiers JavaScript pour les interactions (panier, menu, témoignages, etc.) 
+• IMAGES/ : classées par catégories (abayas, sacs, hommes, femmes, etc.) 
+Étapes de développement 
+1. Création de la structure HTML : pages séparées pour chaque catégorie d’articles. 
+2. Ajout du style CSS : design responsive, adapté aux différents types de produits. 
+3. Intégration JavaScript : pour le panier, la navigation, les avis clients, etc. 
+4. Tests sur navigateurs : compatibilité et bon fonctionnement vérifiés sur 3 navigateurs. 
+5. Optimisation des images : rangement par dossiers, noms cohérents. 
+Exemple de fonctionnement 
+• L’utilisateur accède à la page shop.html où sont listés les produits. 
+• Il peut consulter une fiche produit (men-chaussures.html, women-robe.html...). 
+• À l’aide d’un bouton, il ajoute l’article au panier (géré par cart.js). 
+• Le formulaire de contact (contact.html) permet aux clients d’envoyer un message. 
+Section 2 : Analyse des Résultats et Discussion  
+Le système développé répond aux objectifs définis au départ. Les principaux résultats sont : 
+• Interface intuitive et responsive sur plusieurs tailles d’écran. 
+• Navigation fluide entre les différentes pages produit. 
+• Panier dynamique grâce à JavaScript. 
+• Organisation claire des fichiers pour faciliter la maintenance. 
+
+--- PAGE 19 ---
+  
+ 19 
+• Tests et validation 
+Des tests manuels ont été réalisés sur les navigateurs mentionnés. Les éléments suivants ont été 
+validés : 
+• Le site n’est pas encore connecté à une base de données : aucune persistance des 
+commandes. 
+• Aucune simulation mobile professionnelle  
+• Aucune version hors ligne ni PWA (Progressive Web App) n’est implémentée. 
+ 
+La phase de réalisation a permis de construire un site e -commerce opérationnel avec une 
+architecture claire et modulaire. Les résultats des tests montrent que le système remplit sa fonction 
+avec efficacité. Les bases sont solides pour une éventuelle extension (paiement en ligne, base de 
+données, espace administrateur). 
+Élément testé  Résultat attendu  Résultat observé 
+Navigation entre les pages Rapide, sans erreur  
+   Conforme 
+Affichage mobile Responsive, lisible    Conforme 
+Fonctionnement du panier Ajout, suppression, total    Conforme 
+Icônes et design Cohérents sur toutes les 
+pages    Conforme 
+ 
+
+--- PAGE 20 ---
+  
+ 20 
+Résumé 
+Ce rapport présente la conception et le développement d’un site web e -commerce nommé 
+“ASYOU”, destiné à la vente en ligne de vêtements et d’accessoires. L’objectif principal est de 
+proposer une solution web simple, accessible et responsive, sans recours à des CMS ou Framework, 
+afin de mettre en valeur des produits de qualité tout en offrant une expérience utilisateur fluide. La 
+méthode emplo yée repose sur une approche itérative avec des phases de conception, 
+développement et test. Le site intègre plusieurs fonctionnalités essentielles : navigation dynamique, 
+affichage des produits, panier interactif, section témoignages et formulaire de contact. Les résultats 
+montrent un bon niveau de performance sur différents navigateurs. 
+
+--- PAGE 21 ---
+  
+ 21 
+Abstract 
+This report presents the design and development of an e -commerce website called “ASYOU”, 
+made for selling clothes and accessories online.The main goal is to create a simple, easy to access, 
+and mobile-friendly website, without using any CMS or frameworks. The idea is to show quality 
+products in a nice way and to give users a smooth and pleasant experience.The method used follows 
+three steps: design, development, and testing.The website includes important features like:  
+Dynamic navigation  ,Product display  ,Interactive shopping cart,  Testimonials section, Contact 
+form.The final result shows good performance on different web browsers. 
+
+--- PAGE 22 ---
+  
+ 22 
+ 
+Conclusion 
+Ce projet de création d’un site e -commerce baptisé ASYOU a permis de mettre en œuvre les 
+compétences acquises durant la formation en informatique de gestion à l’université IAM, à travers 
+une solution web concrète et opérationnelle. 
+Conçu en HTML, CSS et JS, sans base de données, le site répond aux besoins essentiels d’une 
+boutique en ligne : présentation de produits, navigation thématique, interaction utilisateur (panier), 
+et design responsive. L’ensemble a été pensé pour être léger, accessible, et facilement modifiable, 
+tout en respectant les principes fondamentaux du développement web. 
+Ce travail a permis d’acquérir une meilleure compréhension de l’architecture web statique, de 
+l’optimisation du code, et des enjeux liés à l’expérience utilisateur dans le contexte d’un commerce 
+en ligne. ASYOU représente ainsi une solution simple, fonctionnelle et adaptée à un projet e -
+commerce de petite ou moyenne envergure. 
+
+--- PAGE 23 ---
+  
+ 23 
+Perspectives 
+Bien que le projet ait atteint ses objectifs, plusieurs pistes d’amélioration peuvent être envisagées : 
+• Ajout d’une base de données (ex : MySQL ou Firebase) pour permettre la persistance des 
+données (panier, utilisateurs, commandes). 
+• Intégration d’un système de paiement sécurisé (ex : ORANGEMONEY , WA VE). 
+• Développement d’une version mobile native ou d’une PWA (Progressive Web App) pour 
+un usage hors ligne et sur smartphone. 
+• Mise en place d’un système d’administration  pour gérer facilement les produits depuis 
+une interface graphique. 
+• Optimisation SEO pour un meilleur référencement sur les moteurs de recherche. 
+Ces évolutions permettraient de professionnaliser davantage le site et de répondre à des besoins 
+plus avancés. 
+•  
+
+--- PAGE 24 ---
+  
+ 24 
+Bibliographie / Webographie 
+• MDN Web Docs. (2024). HTML, CSS, and JavaScript Guide. 
+https://developer.mozilla.org/fr/ (consulté le10 avril 2025) 
+• Pierre Giraud, Cours HTML et CSS - Tutoriel [vidéo]. YouTube.  
+https://youtu.be/Y80juYcu3ZI?si=xGYwNmTuPA23-Zxo (consulté le 05 Avril 2025) 
+• Pierre Giraud, (. Cours JavaScript - Formation débutant [vidéo]. YouTube.  
+https://youtu.be/VZLflMqC6dI?si=xk7faYcVs-3A87l4 Consulté le (consulté le 25 Mai  
+2025) 
+• CodingNepal How to Create Responsive Card Slider in HTML 
+CSS & JavaScript | Step -by Step 
+https://www.youtube.com/watch?v=141301 (Consulté le 10juin 
+2025). 
+• CodingNepal. How to Create a Modern Responsive Contact Us 
+Page Using HTML, CSS and JavaScript. 
+https://www.youtube.com/watch?v=5737 (Consulté le 1 juin 
+2025). 
+• Graven. [Cours / Tuto débutant] Apprendre Javascript de A à Z - 
+Les bases (1/6). https://www.youtube.com/watch?v=208344 
+(Consulté le 25 Mai 2025.) 
+• W3Schools. (2024). Learn HTML, CSS and JavaScript. 
+https://www.w3schools.com (Consulté le 15 Mai 2025.) 
+• FontAwesome. (2024). Icon Library. https://fontawesome.com 
+(Consulté le 1 Mai 2025.) 
+• OpenClassrooms. (2024). Créer un site e -commerce en 
+HTML/CSS/JS. https://openclassrooms.com (Consulté l  Mai 
+2025.) 
+ 
+
+--- PAGE 25 ---
+  
+ 25 
+Annexes 
+L’ACCEUIL 
+ 
+ 
+ 
+
+
+--- PAGE 26 ---
+  
+ 26 
+ 
+ 
+ 
+ 
+La page d’accueil du site ASYOU est soigneusement structurée afin de proposer une 
+navigation intuitive, valoriser les produits et refléter l’univers de la marque : élégance, 
+accessibilité et style personnalisé. 
+Elle débute par un en-tête (header) contenant les éléments essentiels à la navigation : 
+• Le logo ASYOU, 
+• Les liens vers les principales pages : Accueil, Boutique, Homme, Femme, Contact, 
+• Des icônes interactives : panier et favoris, pour suivre ses sélections en temps réel. 
+
+
+--- PAGE 27 ---
+  
+ 27 
+Suit un accueil personnalisé, avec un message de bienvenue, un texte d’annonce affirmant 
+l’identité de la marque, et un bouton principal qui redirige directement vers la boutique 
+en ligne. 
+Ensuite, cinq bannières de styles personnalisés sont mises en avant. Chacune mène vers 
+une page dédiée à une catégorie ou tendance spécifique, facilitant l'exploration de 
+l’univers ASYOU. 
+Plus bas, la page présente plusieurs sections clés : 
+• Une section “Tendances” pour découvrir les articles les plus populaires. 
+• Une section “Réductions”, dédiée aux promotions en cours et offres limitées. 
+• Une section “Nouvelles Collections” qui expose les derniers produits ajoutés. 
+La partie Boutique, accessible directement ou via ces blocs, présente une large sélection 
+d’articles pour hommes et femmes. Chaque produit est affiché avec : 
+• Une image de présentation, 
+• Le nom du produit, 
+• Le prix affiché clairement, 
+• Deux boutons d’action permettant soit d’ajouter l’article au panier, soit de l’ajouter aux 
+favoris. 
+Cette interface permet à l’utilisateur de naviguer facilement entre les catégories et de 
+préparer ses achats de manière fluide et agréable. 
+En complément, la page comporte une section Témoignages, mettant en avant les avis de 
+clients satisfaits, renforçant la crédibilité de la marque. 
+Enfin, une section Newsletter clôture la page en invitant les visiteurs à s’abonner afin de recevoir 
+offres exclusives, nouveautés et inspirations mode directement par email.
+
+
+--- PAGE 28 ---
+  
+ 28 
+ 
+
+
+--- PAGE 29 ---
+  
+ 29 
+ 
+ 
+ 
+ 
+ 
+
+
+--- PAGE 30 ---
+  
+ 30 
+BOUTIQUE
+
+
+--- PAGE 31 ---
+  
+ 31 
+ 
+
+
+--- PAGE 32 ---
+  
+ 32 
+LA PARTIE HOMME
+ 
+ 
+La page Homme du site ASYOU est spécialement conçue pour répondre aux besoins et aux 
+styles vestimentaires masculins, tout en offrant une expérience de navigation fluide et 
+personnalisée. 
+Sur la page, l’utilisateur peut voir  par une defilable visuelle représentative de l’univers 
+masculin de la marque : une mise en valeur de la mode  , mêlant élégance, modernité et 
+authenticité. 
+La page se poursuit avec une section de catégories interactives. Cette section présente 
+plusieurs boutons ou onglets dynamiques représentant différentes catégories de vêtements 
+pour hommes, par exemple : 
+• Street wear 
+• Ensembles modernes 
+• Sandales en cuir 
+• Accessoires (montres, sacs…) 
+ 
+ 
+
+--- PAGE 33 ---
+  
+ 33 
+Lorsque l’on clique sur l’une de ces catégories, la page affiche dynamiquement les produits 
+correspondants, permettant à l’utilisateur de filtrer rapidement selon ses préférences, sans 
+changer de page. 
+En bas de la page, une autre section est dédiée aux articles “Best sellers”, avec des produits 
+modernes, tendance et accessibles. Cette partie reprend une sélection issue de la boutique, 
+mais filtrée uniquement sur des styles adaptés aux differenres personnes. 
+Chaque produit est présenté avec : 
+• Une image produit de qualité, 
+• Le nom du modèle, 
+• Le prix clairement indiqué, 
+• Et deux options d’action : ajouter au panier ou ajouter aux favoris. 
+ 
+ 
+ 
+PARTIE FEMME :  
+
+
+--- PAGE 34 ---
+  
+ 34 
+ 
+ 
+La page Femmes du site ASYOU est pensée pour offrir une expérience de découverte 
+élégante, intuitive et orientée style. Elle met en avant une diversité de produits adaptés 
+aux goûts variés des clientes, tout en facilitant la navigation. 
+A la page, l’utilisateur découvre une bannière immersive illustrant l’univers féminin 
+d’ ASYOU : raffinement, modernité et simplicité. 
+La section principale présente plusieurs catégories de produits, parmi lesquelles : 
+• Robes élégantes 
+• Sacs à main 
+• Accessoires (bijoux, foulards, lunettes, etc.) 
+Chaque catégorie est illustrée par une image représentative et accompagnée d’un bouton 
+“Voir la catégorie”. Lorsqu’un utilisateur clique sur ce bouton, il est redirigé 
+automatiquement vers une page listant uniquement les articles de cette catégorie, ce qui 
+permet une navigation ciblée et plus rapide selon ses besoins. 
+Cette organisation rend la recherche de produits beaucoup plus agréable, tout en mettant 
+en valeur la richesse des collections féminines proposées par ASYOU. 
+Comme dans les autres sections du site, chaque article est présenté avec : 
+• Une photo claire et attrayante, 
+• Le nom du produit, 
+• Le prix affiché, 
+• Et des options pour ajouter au panier ou ajouter aux favoris. 
+
+
+--- PAGE 35 ---
+  
+ 35 
+ 
+PARTIE CONTACT : 
+ 
+
+
+--- PAGE 36 ---
+  
+ 36 
+La page Contact du site ASYOU est conçue pour faciliter la prise de contact entre la marque 
+et ses visiteurs, tout en renforçant la proximité et la confiance. 
+Elle est divisée en plusieurs parties complémentaires : 
+ Informations de contact direct 
+Une première section affiche les coordonnées essentielles : 
+• Le numéro de téléphone pour un contact rapide, 
+• L’adresse de localisation physique de la marque ou de l’atelier, 
+• Et une carte interactive (Google Maps ou autre), permettant aux visiteurs de visualiser la 
+localisation exacte et d’y accéder facilement. 
+Formulaire de contact 
+Juste en dessous, la page propose un formulaire d’envoi de message, intitulé :  
+« Nous aimons avoir de vos nouvelles ». 
+Ce formulaire contient généralement : 
+• Le nom du visiteur, 
+• Son adresse e-mail, 
+• Le sujet ou objet du message, 
+• Et une zone de texte pour écrire le message. 
+Un bouton “Envoyer” permet aux utilisateurs de soumettre leur demande, question ou 
+suggestion, qui est ensuite envoyée à l’équipe ASYOU.. 
+ 
+ 
+ 
+LE FOOTER : 
+
+
+--- PAGE 37 ---
+  
+ 37 
+ 
+ 
+Le footer (pied de page) du site ASYOU est conçu pour regrouper toutes les informations 
+importantes et liens utiles dans un espace unique, accessible depuis n’importe quelle page 
+du site. 
+Il se compose de plusieurs blocs bien organisés : 
+ Liens rapides 
+Cette section donne un accès direct aux différentes pages du site : 
+• Accueil 
+• Boutique 
+• Homme 
+• Femme 
+• Contact 
+Cela permet à l’utilisateur de naviguer rapidement, même depuis le bas de la page. 
+
+
+--- PAGE 38 ---
+  
+ 38 
+ Informations générales 
+Ce bloc contient les coordonnées de la marque : 
+• Adresse / Localisation 
+• Numéro de téléphone 
+• Adresse e-mail de contact 
+Ces informations rassurent l’utilisateur et facilitent la prise de contact. 
+Réseaux sociaux 
+Le footer affiche également les liens vers les réseaux sociaux officiels d’ASYOU 
+(Facebook, Instagram, WhatsApp, etc.) sous forme d’icônes cliquables, permettant aux 
+visiteurs de suivre l’actualité de la marque et de rester connectés. 
+Newsletter 
+Une zone dédiée permet à l’utilisateur de s’abonner à la newsletter en entrant son adresse 
+e-mail. Cela renforce la relation client et permet de diffuser des offres, nouveautés ou 
+conseils.t 
+Enfin, tout en bas du footer, un texte de copyright est affiché, par exemple : 
+© 2025 ASYOU. Tous droits réservés. 
+ 
+LE JS DE LA CARTE : 
+
+--- PAGE 39 ---
+  
+ 39 
+
+
+--- PAGE 40 ---
+  
+ 40 
+
+
+--- PAGE 41 ---
+  
+ 41 
+ 
+ 
+Classe ShoppingCart 
+Cette classe gère tout le système de panier : ajout, suppression, mise à jour des quantités, 
+affichage dynamique, et sauvegarde dans le localStorage. 
+1. Initialisation (constructor) 
+• Récupère le panier depuis localStorage (ou crée un panier vide). 
+• Ajoute dynamiquement un compteur d’articles au niveau de l’icône panier. 
+• Met à jour le compteur d’articles. 
+
+
+--- PAGE 42 ---
+  
+ 42 
+• Active les écouteurs d’événements. 
+ 2. Écoute des événements (initEventListeners) 
+• Ajout au panier : lorsqu’on clique sur un bouton .cart -btn, le produit correspondant est 
+récupéré et ajouté au panier. 
+• Ouverture/Fermeture du panier : en cliquant sur l’icône du panier. 
+3. Ajouter un produit (addToCart) 
+• Si le produit est déjà dans le panier : augmente la quantité. 
+• Sinon : ajoute le produit avec une quantité initiale de 1. 
+• Met à jour le localStorage, le compteur, et affiche une notification. 
+ 4. Supprimer un produit (removeFromCart) 
+• Supprime un produit du panier selon son id. 
+• Met à jour le panier et l’affichage. 
+5. Modifier la quantité (updateQuantity) 
+• Met à jour la quantité d’un produit donné (minimum 1). 
+• Réactualise l’affichage. 
+6. Sauvegarde dans le navigateur (saveCart) 
+• Enregistre le panier dans le localStorage. 
+7. Mise à jour du compteur (updateCartCount) 
+• Calcule le total des quantités. 
+• Affiche ou cache le badge du panier. 
+8. Ouvrir / fermer le panier (toggleCart) 
+• Affiche ou cache le panneau latéral du panier (.cart-modal). 
+• Met à jour les produits affichés s’il est ouvert. 
+9. Affichage du contenu du panier (updateCartDisplay) 
+• Affiche tous les articles dans la zone .cart-items. 
+• Affiche le total du panier. 
+• Ajoute des événements : 
+o Pour augmenter/diminuer la quantité. 
+o Pour supprimer un produit. 
+10. Notification utilisateur (showNotification) 
+• SAffiche une petite notification temporaire (type "toast") pour confirmer l’ajout au panier. 
+11. Initialisation automatique 
+À la fin, une instance de ShoppingCart est créée automatiquement au chargement de la page 
+(DOMContentLoaded). 
+ 
+
+--- PAGE 43 ---
+  
+ 43 
+ 
+Formatage 
+• Titres : Times New Roman, gras, taille 16, aligné au centre, 
+• Chapitre : Times New Roman, gras, taille 16, aligné à gauche, 
+• Contenu : Times New Roman, gras, taille 12, aligné à gauche, 
+• Numérotation des pages : en bas au centre , 
+• Marge : 0.3 cm de chaque côté . 
+ 
+
