@@ -205,7 +205,6 @@ class CourseSearchService
                     'courses' => $items
                         ->sortByDesc('search_score')
                         ->take($perGroup)
-                        ->map(fn (Course $course) => $this->formatCourse($course))
                         ->values()
                         ->all(),
                     'count' => $items->count(),

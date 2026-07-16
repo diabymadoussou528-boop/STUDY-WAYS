@@ -40,12 +40,4 @@ enum MediaCategory: string
     {
         return in_array($this, [self::Avatar, self::CourseThumbnail], true);
     }
-
-    /**
-     * @return array<string, mixed>|null
-     */
-    public function imageTransform(): ?array
-    {
-        return config('media.image_transforms.'.$this->value);
-    }
 }

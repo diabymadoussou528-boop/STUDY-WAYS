@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Enums\AdminActionStatus;
+use App\Enums\ApprovalStatus;
+use App\Enums\CourseStatus;
 use App\Models\AdminActionRequest;
 use App\Models\AdminAuditLog;
 use App\Models\Course;
@@ -46,14 +48,14 @@ class AdminActionRequestService
     public function approve(AdminActionRequest $request, User $reviewer, ?string $note = null): void
     {
         DB::transaction(function () use ($request, $reviewer, $note) {
-            $this->execute($request);
-
             $request->update([
                 'status' => AdminActionStatus::Approved,
                 'reviewed_by' => $reviewer->id,
                 'review_note' => $note,
                 'reviewed_at' => now(),
             ]);
+
+            $this->execute($request);
 
             AdminAuditLog::record('admin_action.approved', $reviewer, [
                 'request_id' => $request->id,
@@ -85,8 +87,25 @@ class AdminActionRequestService
             'delete_testimonial' => $this->deleteTestimonial($request),
             'toggle_user_status' => $this->toggleUserStatus($request),
             'update_course_status' => $this->updateCourseStatus($request),
+            'create_course' => $this->publishCourse($request),
+            'publish_course' => $this->publishCourse($request),
             default => null,
         };
+    }
+
+    private function publishCourse(AdminActionRequest $request): void
+    {
+        $target = $request->resolveTarget();
+
+        if ($target instanceof Course) {
+            $target->update([
+                'status' => CourseStatus::Published,
+                'published_at' => now(),
+                'approval_status' => ApprovalStatus::Approved,
+                'approved_by' => $request->reviewed_by,
+                'approved_at' => $request->reviewed_at ?? now(),
+            ]);
+        }
     }
 
     private function deleteUser(AdminActionRequest $request): void
@@ -130,8 +149,16 @@ class AdminActionRequestService
     {
         $target = $request->resolveTarget();
 
-        if ($target instanceof Course && isset($request->payload['status'])) {
-            $target->update(['status' => $request->payload['status']]);
+        if (! $target instanceof Course || ! isset($request->payload['status'])) {
+            return;
         }
+
+        if ($request->payload['status'] === CourseStatus::Published->value) {
+            $this->publishCourse($request);
+
+            return;
+        }
+
+        $target->update(['status' => $request->payload['status']]);
     }
 }

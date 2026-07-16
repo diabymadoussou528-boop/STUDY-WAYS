@@ -28,7 +28,7 @@ class TeacherManagementController extends Controller
 
     public function show(User $teacher): View
     {
-        abort_unless($teacher->role === 'professor', 404);
+        abort_unless($teacher->isTeacher(), 404);
 
         $courses = Course::query()
             ->where('user_id', $teacher->id)
@@ -55,7 +55,7 @@ class TeacherManagementController extends Controller
 
     public function toggleStatus(User $teacher): RedirectResponse
     {
-        abort_unless($teacher->role === 'professor', 404);
+        abort_unless($teacher->isTeacher(), 404);
 
         if (! $this->canManageUser($teacher)) {
             return back()->with('error', 'Action non autorisée.');
@@ -73,7 +73,7 @@ class TeacherManagementController extends Controller
 
     public function destroy(User $teacher): RedirectResponse
     {
-        abort_unless($teacher->role === 'professor', 404);
+        abort_unless($teacher->isTeacher(), 404);
 
         if (! $this->canManageUser($teacher)) {
             return back()->with('error', 'Action non autorisée.');

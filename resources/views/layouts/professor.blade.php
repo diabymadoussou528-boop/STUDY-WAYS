@@ -72,6 +72,10 @@
                 <span class="sidebar-link-icon"><i class="fas fa-clipboard-question"></i></span>
                 <span class="sidebar-link-text">Quiz</span>
             </a>
+            <a href="{{ route('professor.archive') }}" class="sidebar-link {{ request()->routeIs('professor.archive') ? 'active' : '' }}">
+                <span class="sidebar-link-icon"><i class="fas fa-archive"></i></span>
+                <span class="sidebar-link-text">Archives</span>
+            </a>
             <a href="{{ route('courses.create') }}" class="sidebar-link {{ request()->routeIs('courses.create') ? 'active' : '' }}">
                 <span class="sidebar-link-icon"><i class="fas fa-plus"></i></span>
                 <span class="sidebar-link-text">Créer un cours</span>

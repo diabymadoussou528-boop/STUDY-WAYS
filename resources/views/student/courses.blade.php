@@ -22,22 +22,9 @@
     </div>
     <div class="widget-body course-card-grid">
         @foreach($inProgress as $enrollment)
-            <div class="sw-course-card">
-                <div class="sw-progress-ring-wrap">
-                    <svg viewBox="0 0 36 36" width="56" height="56">
-                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#eee" stroke-width="3"/>
-                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#8B2032" stroke-width="3" stroke-dasharray="{{ $enrollment->progress }}, 100"/>
-                    </svg>
-                    <span class="sw-progress-ring-label">{{ $enrollment->progress }}%</span>
-                </div>
-                <div style="flex:1;">
-                    <div class="course-list-title">{{ $enrollment->course?->title }}</div>
-                    <div class="course-list-meta">{{ $enrollment->course?->user?->name ?? 'Professeur' }}</div>
-                    @if($enrollment->course)
-                        <a href="{{ route('courses.show', $enrollment->course->id) }}" class="btn btn-primary btn-sm" style="margin-top:10px;">Continuer</a>
-                    @endif
-                </div>
-            </div>
+            @if($enrollment->course)
+                <x-course-card :course="$enrollment->course" :show-progress="true" :progress="$enrollment->progress" cta-label="Continuer" />
+            @endif
         @endforeach
     </div>
 </section>
@@ -116,5 +103,7 @@
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('css/student-chat.css') }}">
+<link rel="stylesheet" href="{{ asset('css/course-card.css') }}">
+<link rel="stylesheet" href="{{ asset('css/course-experience.css') }}">
 <style>.progress-inline{display:flex;align-items:center;gap:8px}.progress-bar-wrap{background:#eee;border-radius:999px;height:8px;width:100px;overflow:hidden}.progress-bar{background:linear-gradient(90deg,#8B2032,#a82841);height:100%;border-radius:999px}</style>
 @endsection

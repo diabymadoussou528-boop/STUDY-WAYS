@@ -1055,6 +1055,7 @@ body.admin-premium .page-content {
     z-index: 0;
     filter: blur(90px);
     animation: orbFloat 18s ease-in-out infinite;
+    will-change: transform;
 }
 
 .admin-orb--1 {

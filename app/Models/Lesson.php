@@ -115,7 +115,7 @@ class Lesson extends Model
         }
 
         if ($this->lesson_type === LessonType::Video && filled($this->resource_path)) {
-            return app(MediaStorageService::class)->url($this->resource_path, MediaCategory::LessonVideo);
+            return route('lessons.video.stream', $this);
         }
 
         return null;

@@ -166,28 +166,21 @@
         <a href="{{ route('home') }}#catalogue" class="btn btn-outline btn-sm">Catalogue</a>
     </div>
     <div class="widget-body">
-        @forelse($recommended as $course)
-            <div class="course-list-item">
-                <div class="course-list-thumb"><i class="fas fa-book"></i></div>
-                <div class="course-list-info">
-                    <div class="course-list-title">{{ Str::limit($course->title, 40) }}</div>
-                    <div class="course-list-meta">
-                        <span>{{ $course->user?->name ?? 'Professeur' }}</span>
-                        <span class="rating-pill">★ {{ number_format((float) ($course->reviews_avg_rating ?? 0), 1) }}</span>
-                        <span>{{ $course->enrollments_count ?? 0 }} inscrits</span>
-                    </div>
-                </div>
-                <a href="{{ route('courses.show', $course->id) }}" class="btn btn-outline btn-sm">Voir</a>
-            </div>
-        @empty
-            <div class="empty-state premium-empty"><p>Aucune recommandation pour le moment.</p></div>
-        @endforelse
+        <div class="course-card-grid">
+            @forelse($recommended as $course)
+                <x-course-card :course="$course" cta-label="Voir les détails" />
+            @empty
+                <div class="empty-state premium-empty"><p>Aucune recommandation pour le moment.</p></div>
+            @endforelse
+        </div>
     </div>
 </section>
 
 @endsection
 
 @section('styles')
+<link rel="stylesheet" href="{{ asset('css/course-card.css') }}">
+<link rel="stylesheet" href="{{ asset('css/course-experience.css') }}">
 <style>
 .progress-inline { display:flex; align-items:center; gap:8px; }
 .progress-bar-wrap { background:#eee; border-radius:999px; height:8px; width:100px; overflow:hidden; }

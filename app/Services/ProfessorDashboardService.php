@@ -20,6 +20,7 @@ class ProfessorDashboardService
     {
         $courses = Course::query()
             ->where('user_id', $professor->id)
+            ->with(['user:id,name', 'category:id,name'])
             ->withCount(['lessons', 'reviews', 'enrollments'])
             ->withAvg('reviews', 'rating')
             ->latest()

@@ -7,20 +7,12 @@ return [
     | Media Storage Disk
     |--------------------------------------------------------------------------
     |
-    | Use "public" for local development/tests, or "cloudinary" for cloud
-    | storage. Cloudinary requires CLOUDINARY_* credentials in .env.
+    | Use "public" for local development/tests, or "google" for Google Drive
+    | storage when the corresponding credentials are configured.
     |
     */
 
     'disk' => env('MEDIA_DISK', 'public'),
-
-    'cloud_prefix' => env('MEDIA_CLOUD_PREFIX', 'studways'),
-
-    'cloudinary' => [
-        'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
-        'api_key' => env('CLOUDINARY_API_KEY'),
-        'api_secret' => env('CLOUDINARY_API_SECRET'),
-    ],
 
     'folders' => [
         'avatar' => 'avatars',
@@ -42,9 +34,21 @@ return [
             'mime_types' => ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
         ],
         'course_video' => [
-            'max_kb' => 512000,
-            'mimes' => ['mp4', 'webm', 'ogg', 'mov'],
-            'mime_types' => ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'],
+            'max_kb' => 1024000,
+            'mimes' => ['mp4', 'webm', 'ogg', 'mov', 'pdf', 'doc', 'docx', 'ppt', 'pptx', 'zip', 'txt'],
+            'mime_types' => [
+                'video/mp4',
+                'video/webm',
+                'video/ogg',
+                'video/quicktime',
+                'application/pdf',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.ms-powerpoint',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                'application/zip',
+                'text/plain',
+            ],
         ],
         'lesson_video' => [
             'max_kb' => 512000,
@@ -65,23 +69,6 @@ return [
                 'video/mp4',
                 'video/webm',
             ],
-        ],
-    ],
-
-    'image_transforms' => [
-        'avatar' => [
-            'width' => 400,
-            'height' => 400,
-            'crop' => 'fill',
-            'quality' => 'auto',
-            'fetch_format' => 'auto',
-        ],
-        'course_thumbnail' => [
-            'width' => 1280,
-            'height' => 720,
-            'crop' => 'limit',
-            'quality' => 'auto',
-            'fetch_format' => 'auto',
         ],
     ],
 

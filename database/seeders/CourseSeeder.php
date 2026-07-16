@@ -8,123 +8,159 @@ use App\Models\Category;
 use App\Models\Course;
 use App\Models\CourseModule;
 use App\Models\Lesson;
-use App\Models\Review;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class CourseSeeder extends Seeder
 {
     public function run(): void
     {
-        $professor = User::query()->where('role', 'professor')->first()
-            ?? User::factory()->professor()->create([
-                'name' => 'Prof. Demo',
-                'bio' => 'Développeur passionné par l\'enseignement et la transmission de connaissances techniques.',
-            ]);
+        // Clean up existing seeded courses/lessons
+        Course::query()->delete();
+        CourseModule::query()->delete();
+        Lesson::query()->delete();
 
-        $cat = Category::query()->firstOrCreate(
+        // 1. Create categories
+        $catWeb = Category::query()->firstOrCreate(
             ['name' => 'Informatique'],
-            ['slug' => 'informatique'],
+            ['slug' => 'informatique']
         );
 
-        $course1 = Course::query()->updateOrCreate(
-            ['title' => 'Algorithmique'],
+        $catVue = Category::query()->firstOrCreate(
+            ['name' => 'Vue.js'],
+            ['slug' => 'vue-js']
+        );
+
+        $catReact = Category::query()->firstOrCreate(
+            ['name' => 'React'],
+            ['slug' => 'react']
+        );
+
+        // 2. Create teachers
+        $profPierre = User::query()->firstOrCreate(
+            ['email' => 'pierre@studways.test'],
             [
-                'description' => 'Maîtrisez les fondamentaux de l\'algorithmique et des structures de données. Ce cours couvre les concepts essentiels pour résoudre des problèmes complexes de manière efficace.',
-                'short_description' => 'Apprenez les bases de l\'algorithmique et des structures de données.',
-                'category_id' => $cat->id,
-                'user_id' => $professor->id,
-                'status' => CourseStatus::Published,
-                'published_at' => now(),
-                'price' => 0,
-                'difficulty' => 'beginner',
-                'duration_minutes' => 480,
-                'objectives' => [
-                    'Comprendre la complexité algorithmique',
-                    'Maîtriser les structures de données fondamentales',
-                    'Résoudre des problèmes avec des algorithmes efficaces',
-                    'Préparer des entretiens techniques',
-                ],
-                'requirements' => [
-                    'Notions de base en programmation',
-                    'Motivation et régularité',
-                ],
-                'meta_keywords' => 'Algorithmique, Structures de données, PHP',
-            ],
+                'name' => 'Pierre Nikolaus',
+                'role' => 'professor',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+            ]
         );
 
-        $module1 = CourseModule::query()->firstOrCreate(
-            ['course_id' => $course1->id, 'title' => 'Introduction & bases'],
-            ['description' => 'Découvrez les concepts fondamentaux.', 'sort_order' => 1],
-        );
-
-        Lesson::query()->updateOrCreate(
-            ['course_id' => $course1->id, 'title' => 'Qu\'est-ce que l\'algorithmique ?'],
+        $profMagnolia = User::query()->firstOrCreate(
+            ['email' => 'magnolia@studways.test'],
             [
-                'module_id' => $module1->id,
-                'video_url' => 'https://www.youtube.com/embed/videoseries?list=PL0AhTDV4Osc9pJ1drLrWc9KVpWAZe6tpZ',
-                'lesson_type' => LessonType::Video,
-                'duration_seconds' => 320,
-                'sort_order' => 1,
-                'is_preview' => true,
-            ],
+                'name' => 'Magnolia Kub',
+                'role' => 'professor',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+            ]
         );
 
-        Lesson::query()->updateOrCreate(
-            ['course_id' => $course1->id, 'title' => 'Complexité algorithmique'],
+        $profRita = User::query()->firstOrCreate(
+            ['email' => 'rita@studways.test'],
             [
-                'module_id' => $module1->id,
-                'content' => 'La complexité algorithmique mesure l\'efficacité d\'un algorithme en fonction de la taille des données.',
-                'lesson_type' => LessonType::Text,
-                'duration_seconds' => 600,
-                'sort_order' => 2,
-            ],
+                'name' => 'Rita Beatty PhD',
+                'role' => 'professor',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+            ]
         );
 
-        $course2 = Course::query()->updateOrCreate(
-            ['title' => 'Réseaux'],
+        // 3. Define courses
+        $coursesData = [
             [
-                'description' => 'Comprenez les réseaux informatiques, TCP/IP et la sécurité réseau. Un cours complet pour maîtriser les fondamentaux du networking.',
-                'short_description' => 'TCP/IP, protocoles et sécurité réseau.',
-                'category_id' => $cat->id,
-                'user_id' => $professor->id,
-                'status' => CourseStatus::Published,
-                'published_at' => now(),
-                'price' => 0,
-                'difficulty' => 'intermediate',
-                'duration_minutes' => 360,
-                'objectives' => [
-                    'Comprendre le modèle OSI et TCP/IP',
-                    'Configurer des réseaux locaux',
-                    'Sécuriser une infrastructure réseau',
-                ],
-                'requirements' => ['Notions en informatique'],
-                'meta_keywords' => 'Réseaux, TCP/IP, Sécurité',
+                'title' => 'Vue.js Essentials',
+                'description' => 'Maîtrisez les bases de Vue.js pour créer des applications web interactives.',
+                'short_description' => 'Apprenez à développer des composants avec Vue.js.',
+                'category_id' => $catVue->id,
+                'user_id' => $profPierre->id,
+                'thumbnail' => 'thumbnails/vuejs_essentials.png',
+                'video_path' => 'videos/Q7qd0FGfeb4rMq8ppJzepljG3ayu594uLyVO84L5.mp4',
             ],
-        );
-
-        $module2 = CourseModule::query()->firstOrCreate(
-            ['course_id' => $course2->id, 'title' => 'Fondamentaux réseau'],
-            ['sort_order' => 1],
-        );
-
-        Lesson::query()->updateOrCreate(
-            ['course_id' => $course2->id, 'title' => 'Introduction aux réseaux'],
             [
-                'module_id' => $module2->id,
-                'video_url' => 'https://www.youtube.com/embed/videoseries?list=PLSuzYIVSEUT6SE-5dSZq-zbtItfHqWdqv',
-                'lesson_type' => LessonType::Video,
-                'duration_seconds' => 450,
-                'sort_order' => 1,
-                'is_preview' => true,
+                'title' => 'Maîtriser Laravel 13',
+                'description' => 'Découvrez les fonctionnalités de Laravel 13 et construisez des architectures web d\'élite.',
+                'short_description' => 'Développement backend moderne avec Laravel 13.',
+                'category_id' => $catWeb->id,
+                'user_id' => $profMagnolia->id,
+                'thumbnail' => 'thumbnails/maitriser_laravel.png',
+                'video_path' => 'videos/Q7qd0FGfeb4rMq8ppJzepljG3ayu594uLyVO84L5.mp4',
             ],
-        );
+            [
+                'title' => 'ReactJS — Développement Frontend',
+                'description' => 'Devenez expert en développement React et apprenez à gérer les états complexes.',
+                'short_description' => 'Applications SPA modernes avec React.',
+                'category_id' => $catReact->id,
+                'user_id' => $profRita->id,
+                'thumbnail' => 'thumbnails/react_laravel.png',
+                'video_path' => 'videos/Q7qd0FGfeb4rMq8ppJzepljG3ayu594uLyVO84L5.mp4',
+            ],
+            [
+                'title' => 'Développement Frontend',
+                'description' => 'Un parcours complet pour maîtriser l\'intégration web et les technologies frontend.',
+                'short_description' => 'Intégration moderne HTML, CSS et JavaScript.',
+                'category_id' => $catWeb->id,
+                'user_id' => $profRita->id,
+                'thumbnail' => 'thumbnails/dev_frontend.png',
+                'video_path' => 'videos/Q7qd0FGfeb4rMq8ppJzepljG3ayu594uLyVO84L5.mp4',
+            ],
+            [
+                'title' => 'Martin Bernard',
+                'description' => 'Découvrez les techniques avancées de gestion de projet informatique.',
+                'short_description' => 'Gestion agile et architecture technique.',
+                'category_id' => $catWeb->id,
+                'user_id' => $profRita->id,
+                'thumbnail' => 'thumbnails/laptop_coffee.png',
+                'video_path' => 'videos/Q7qd0FGfeb4rMq8ppJzepljG3ayu594uLyVO84L5.mp4',
+            ],
+        ];
 
-        $student = User::query()->where('role', 'student')->first();
-        if ($student) {
-            Review::query()->firstOrCreate(
-                ['user_id' => $student->id, 'course_id' => $course1->id],
-                ['rating' => 5, 'comment' => 'Excellent cours, très bien structuré et facile à suivre.'],
+        foreach ($coursesData as $idx => $data) {
+            $course = Course::query()->updateOrCreate(
+                ['title' => $data['title']],
+                [
+                    'description' => $data['description'],
+                    'short_description' => $data['short_description'],
+                    'category_id' => $data['category_id'],
+                    'user_id' => $data['user_id'],
+                    'status' => CourseStatus::Published,
+                    'approval_status' => 'approved',
+                    'published_at' => now()->subDays($idx),
+                    'price' => 0,
+                    'difficulty' => 'beginner',
+                    'duration_minutes' => 120,
+                    'thumbnail' => $data['thumbnail'],
+                    'video_path' => $data['video_path'],
+                    'video_url' => null,
+                    'video_drive_id' => null,
+                    'thumbnail_drive_id' => null,
+                    'thumbnail_url' => null,
+                    'google_drive_video_id' => null,
+                    'google_drive_thumbnail_id' => null,
+                    'google_drive_video_url' => null,
+                    'google_drive_thumbnail_url' => null,
+                    'upload_status' => 'completed',
+                ]
+            );
+
+            // Seed a module and lesson
+            $module = CourseModule::query()->firstOrCreate(
+                ['course_id' => $course->id, 'title' => 'Introduction'],
+                ['description' => 'Bases et configuration.', 'sort_order' => 1]
+            );
+
+            Lesson::query()->updateOrCreate(
+                ['course_id' => $course->id, 'title' => 'Introduction générale'],
+                [
+                    'module_id' => $module->id,
+                    'resource_path' => $data['video_path'],
+                    'lesson_type' => LessonType::Video,
+                    'duration_seconds' => 300,
+                    'sort_order' => 1,
+                    'is_preview' => true,
+                ]
             );
         }
     }

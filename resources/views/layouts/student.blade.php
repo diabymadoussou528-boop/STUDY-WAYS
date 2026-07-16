@@ -52,6 +52,10 @@
                 <span class="sidebar-link-icon"><i class="fas fa-book-open"></i></span>
                 <span class="sidebar-link-text">Mes cours</span>
             </a>
+            <a href="{{ route('student.favorites') }}" class="sidebar-link {{ request()->routeIs('student.favorites') ? 'active' : '' }}">
+                <span class="sidebar-link-icon"><i class="fas fa-heart"></i></span>
+                <span class="sidebar-link-text">Favoris</span>
+            </a>
             <a href="{{ route('student.certificates.index') }}" class="sidebar-link {{ request()->routeIs('student.certificates.*') ? 'active' : '' }}">
                 <span class="sidebar-link-icon"><i class="fas fa-certificate"></i></span>
                 <span class="sidebar-link-text">Certificats</span>

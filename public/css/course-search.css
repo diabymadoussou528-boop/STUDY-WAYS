@@ -69,6 +69,14 @@
   border-top: 1px solid #ececec;
 }
 
+.course-search-page .sw-courses-grid {
+  margin-top: 8px;
+}
+
+.course-search-page .sw-section-shell {
+  max-width: 1200px;
+}
+
 .course-search-row {
   display: grid;
   grid-template-columns: 120px 1fr;

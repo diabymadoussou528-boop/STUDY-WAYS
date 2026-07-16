@@ -113,7 +113,6 @@
         // Loading state
         document.getElementById('forgotForm').addEventListener('submit', function () {
             submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Envoi...';
-            submitBtn.disabled = true;
         });
     </script>
 </body>

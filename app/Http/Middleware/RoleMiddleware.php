@@ -28,7 +28,7 @@ class RoleMiddleware
             return $next($request);
         }
 
-        if ($user->role !== $role) {
+        if ($user->role !== $role && ! ($role === 'professor' && $user->role === 'teacher')) {
             abort(403, 'Accès refusé');
         }
 

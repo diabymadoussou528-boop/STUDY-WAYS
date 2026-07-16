@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\EnrollmentStatus;
 use App\Models\Course;
+use App\Models\Lesson;
 use App\Models\LessonCompletion;
 use App\Models\User;
 use Illuminate\Support\Collection;
@@ -11,7 +12,10 @@ use Illuminate\Support\Facades\Schema;
 
 class CourseShowService
 {
-    public function __construct(private EnrollmentService $enrollmentService) {}
+    public function __construct(
+        private EnrollmentService $enrollmentService,
+        private RelatedCourseService $relatedCourseService,
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -44,6 +48,15 @@ class CourseShowService
         $modules = $this->buildModules($course, $completedLessonIds, $canAccessFullContent);
         $totalDurationSeconds = $this->totalDurationSeconds($course);
         $totalLessons = $course->lessons_count ?: $course->lessons->count();
+        $navigation = $this->lessonNavigation($course, $activeEnrollment?->current_lesson_id);
+
+        $userReview = $user
+            ? $course->reviews->firstWhere('user_id', $user->id)
+            : null;
+
+        $isFavorited = $user && $user->isStudent() && Schema::hasTable('course_favorites')
+            ? $user->favoriteCourses()->where('course_id', $course->id)->exists()
+            : false;
 
         return [
             'course' => $course,
@@ -61,11 +74,20 @@ class CourseShowService
                 'rating' => round((float) ($course->reviews_avg_rating ?? 0), 2),
                 'reviewsCount' => $course->reviews_count,
                 'lessons' => $totalLessons,
+                'views' => (int) $course->views,
                 'durationLabel' => $this->formatDurationLabel($course, $totalDurationSeconds),
+                'publishedAt' => $course->published_at?->translatedFormat('j F Y')
+                    ?? $course->created_at?->translatedFormat('j F Y'),
             ],
             'totalDurationSeconds' => $totalDurationSeconds,
             'totalLessons' => $totalLessons,
             'shareUrl' => route('courses.show', $course),
+            'relatedCourses' => $this->relatedCourseService->for($course),
+            'previousLesson' => $navigation['previous'],
+            'nextLesson' => $navigation['next'],
+            'continueLesson' => $navigation['current'],
+            'userReview' => $userReview,
+            'isFavorited' => $isFavorited,
         ];
     }
 
@@ -80,6 +102,33 @@ class CourseShowService
         }
 
         return $isEnrolled && $user->isStudent();
+    }
+
+    /**
+     * @return array{previous: ?Lesson, next: ?Lesson, current: ?Lesson}
+     */
+    private function lessonNavigation(Course $course, ?int $currentLessonId): array
+    {
+        $lessons = $course->lessons->values();
+
+        if ($lessons->isEmpty()) {
+            return ['previous' => null, 'next' => null, 'current' => null];
+        }
+
+        $currentIndex = 0;
+
+        if ($currentLessonId) {
+            $found = $lessons->search(fn (Lesson $lesson) => (int) $lesson->id === (int) $currentLessonId);
+            if ($found !== false) {
+                $currentIndex = (int) $found;
+            }
+        }
+
+        return [
+            'previous' => $lessons->get($currentIndex - 1),
+            'next' => $lessons->get($currentIndex + 1),
+            'current' => $lessons->get($currentIndex),
+        ];
     }
 
     /**
@@ -152,7 +201,7 @@ class CourseShowService
             'isPreview' => (bool) $lesson->is_preview,
             'isAccessible' => $isAccessible,
             'isCompleted' => in_array($lesson->id, $completedLessonIds, true),
-            'hasVideo' => filled($lesson->video_url),
+            'hasVideo' => filled($lesson->video_url) || filled($lesson->resource_path),
             'hasResource' => filled($lesson->resource_url) || filled($lesson->resource_path),
             'hasContent' => filled($lesson->content),
         ];
@@ -166,14 +215,14 @@ class CourseShowService
         $tags = [];
 
         if ($course->category?->name) {
-            $tags[] = strtoupper($course->category->name);
+            $tags[] = $course->category->name;
         }
 
         if ($course->meta_keywords) {
             foreach (preg_split('/[,;]+/', $course->meta_keywords) as $tag) {
                 $tag = trim($tag);
                 if ($tag !== '') {
-                    $tags[] = strtoupper($tag);
+                    $tags[] = $tag;
                 }
             }
         }
@@ -192,10 +241,11 @@ class CourseShowService
             ['icon' => 'fa-graduation-cap', 'label' => 'Spécialisation', 'value' => $course->user?->specialization ?? '—'],
             ['icon' => 'fa-clock', 'label' => 'Durée', 'value' => $this->formatDurationLabel($course, $totalDurationSeconds)],
             ['icon' => 'fa-book-open', 'label' => 'Leçons', 'value' => (string) $totalLessons],
-            ['icon' => 'fa-language', 'label' => 'Langue', 'value' => 'Français'],
+            ['icon' => 'fa-language', 'label' => 'Langue', 'value' => $course->language ?: 'Français'],
+            ['icon' => 'fa-eye', 'label' => 'Vues', 'value' => number_format((int) $course->views)],
             ['icon' => 'fa-certificate', 'label' => 'Certificat', 'value' => 'Oui'],
-            ['icon' => 'fa-calendar', 'label' => 'Mis à jour', 'value' => $course->updated_at?->translatedFormat('j M Y') ?? '—'],
-            ['icon' => 'fa-calendar-plus', 'label' => 'Créé le', 'value' => $course->created_at?->translatedFormat('j M Y') ?? '—'],
+            ['icon' => 'fa-calendar', 'label' => 'Publié', 'value' => $course->published_at?->translatedFormat('j M Y')
+                ?? $course->created_at?->translatedFormat('j M Y') ?? '—'],
         ];
     }
 

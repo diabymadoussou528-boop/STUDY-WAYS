@@ -17,12 +17,16 @@ class LogAuthenticationEvents
             return;
         }
 
-        $this->auditLog->log(
-            action: 'auth.login',
-            module: 'authentication',
-            description: 'Connexion réussie',
-            actor: $event->user,
-        );
+        try {
+            $this->auditLog->log(
+                action: 'auth.login',
+                module: 'authentication',
+                description: 'Connexion réussie',
+                actor: $event->user,
+            );
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 
     public function handleLogout(Logout $event): void
@@ -31,11 +35,15 @@ class LogAuthenticationEvents
             return;
         }
 
-        $this->auditLog->log(
-            action: 'auth.logout',
-            module: 'authentication',
-            description: 'Déconnexion',
-            actor: $event->user,
-        );
+        try {
+            $this->auditLog->log(
+                action: 'auth.logout',
+                module: 'authentication',
+                description: 'Déconnexion',
+                actor: $event->user,
+            );
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 }

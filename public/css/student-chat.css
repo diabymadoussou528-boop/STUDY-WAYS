@@ -300,3 +300,120 @@
         grid-template-columns: 1fr;
     }
 }
+
+.sw-ai-layout {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    min-height: 640px;
+}
+
+.sw-ai-sidebar {
+    border-right: 1px solid rgba(17, 24, 39, 0.08);
+    padding: 16px;
+    background: #fafafa;
+}
+
+.sw-ai-sidebar__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.sw-ai-conversation-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+    max-height: 560px;
+    overflow: auto;
+}
+
+.sw-ai-conversation {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid transparent;
+}
+
+.sw-ai-conversation.is-active {
+    border-color: rgba(139, 32, 50, 0.35);
+    background: #fff5f6;
+}
+
+.sw-ai-conversation__open {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 0.88rem;
+}
+
+.sw-ai-conversation__delete {
+    border: 0;
+    background: transparent;
+    color: #9ca3af;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.sw-ai-modes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 0 12px;
+}
+
+.sw-ai-mode {
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.sw-ai-mode.is-active {
+    background: #8B2032;
+    border-color: #8B2032;
+    color: #fff;
+}
+
+.sw-chat-premium-hint {
+    margin: 8px 0 0;
+    color: #8B2032;
+    font-size: 0.85rem;
+}
+
+.sw-chat-content pre,
+.sw-chat-content code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.sw-chat-content pre {
+    background: #111827;
+    color: #f9fafb;
+    padding: 12px;
+    border-radius: 10px;
+    overflow: auto;
+}
+
+.sw-chat-content p { margin: 0 0 0.6em; }
+.sw-chat-content ul, .sw-chat-content ol { margin: 0 0 0.6em 1.2em; }
+
+@media (max-width: 980px) {
+    .sw-ai-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sw-ai-sidebar {
+        border-right: 0;
+        border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+    }
+}

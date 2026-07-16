@@ -34,6 +34,57 @@ test('catalog page lists published courses from database', function () {
         ->assertSee($course->title);
 });
 
+test('catalog page can filter by category and difficulty and sort by popularity', function () {
+    $webCategory = Category::query()->create(['name' => 'Développement Web', 'slug' => 'dev-web-'.uniqid()]);
+    $designCategory = Category::query()->create(['name' => 'Design', 'slug' => 'design-'.uniqid()]);
+
+    $popularCourse = Course::factory()->published()->create([
+        'title' => 'Laravel Mastery',
+        'category_id' => $webCategory->id,
+        'difficulty' => 'beginner',
+    ]);
+
+    $lessPopularCourse = Course::factory()->published()->create([
+        'title' => 'Vue Components',
+        'category_id' => $webCategory->id,
+        'difficulty' => 'beginner',
+    ]);
+
+    Course::factory()->published()->create([
+        'title' => 'Design Systems',
+        'category_id' => $designCategory->id,
+        'difficulty' => 'advanced',
+    ]);
+
+    Enrollment::factory()->count(3)->create(['course_id' => $popularCourse->id]);
+    Enrollment::factory()->count(1)->create(['course_id' => $lessPopularCourse->id]);
+
+    $this->get(route('catalog.index', [
+        'category' => $webCategory->slug,
+        'difficulty' => 'beginner',
+        'sort' => 'popular',
+    ]))
+        ->assertSuccessful()
+        ->assertSee('Catalogue premium StudyWays')
+        ->assertSee('Laravel Mastery')
+        ->assertSee('Vue Components')
+        ->assertDontSee('Design Systems')
+        ->assertSeeInOrder(['Laravel Mastery', 'Vue Components']);
+});
+
+test('student can view favorites page with saved courses', function () {
+    $student = User::factory()->create(['role' => 'student']);
+    $course = lmsPublishedCourse();
+
+    $student->favoriteCourses()->attach($course->id);
+
+    $this->actingAs($student)
+        ->get(route('student.favorites'))
+        ->assertSuccessful()
+        ->assertSee('Mes favoris')
+        ->assertSee($course->title);
+});
+
 test('student can enroll in a free published course', function () {
     $student = User::factory()->create(['role' => 'student']);
     $course = lmsPublishedCourse();

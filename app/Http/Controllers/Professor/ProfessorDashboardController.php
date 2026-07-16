@@ -49,4 +49,11 @@ class ProfessorDashboardController extends Controller
 
         return view('professor.reviews', ['recentReviews' => $data['recentReviews'], 'courses' => $data['courses']]);
     }
+
+    public function archive(ProfessorDashboardService $service): View
+    {
+        $data = $service->dashboardPayload(auth()->user());
+
+        return view('professor.archive', $data);
+    }
 }

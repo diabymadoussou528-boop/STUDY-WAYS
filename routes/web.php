@@ -16,7 +16,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseLearnController;
 use App\Http\Controllers\CoursePageController;
 use App\Http\Controllers\CourseSearchController;
-use App\Http\Controllers\FirebaseTestController;
+use App\Http\Controllers\FavoriteCourseController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\PlatformNotificationController;
 use App\Http\Controllers\Professor\AppointmentController as ProfessorAppointmentController;
@@ -40,6 +40,7 @@ use App\Http\Controllers\Student\QuizController as StudentQuizController;
 use App\Http\Controllers\Student\StudentDashboardController;
 use App\Http\Controllers\Student\SubscriptionController;
 use App\Http\Controllers\SuperAdmin\SimpleAdminController;
+use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\Webhooks\StripeWebhookController;
 use App\Models\Course;
 use App\Models\Testimonial;
@@ -58,7 +59,7 @@ Route::get('/', function () {
     $featuredCourses = Course::query()
         ->published()
         ->with(['user:id,name', 'category:id,name'])
-        ->withCount('enrollments')
+        ->withCount(['enrollments', 'reviews'])
         ->withAvg('reviews', 'rating')
         ->latest('published_at')
         ->limit(6)
@@ -82,7 +83,7 @@ require __DIR__.'/auth.php';
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
+Route::middleware(['auth'])->get('/dashboard', function () {
     $user = Auth::user();
 
     if (! $user) {
@@ -91,7 +92,7 @@ Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
 
     return match ($user->role) {
         'admin' => redirect()->route('admin.dashboard'),
-        'professor' => redirect()->route('professor.dashboard'),
+        'professor', 'teacher' => redirect()->route('professor.dashboard'),
         default => redirect()->route('student.dashboard'),
     };
 })->name('dashboard');
@@ -329,6 +330,8 @@ Route::middleware(['auth', 'role:professor'])
             ->name('professor.appointments.reschedule');
         Route::get('/reviews', [ProfessorDashboardController::class, 'reviews'])
             ->name('professor.reviews');
+        Route::get('/archive', [ProfessorDashboardController::class, 'archive'])
+            ->name('professor.archive');
 
         /*
         |--------------------------------------------------------------------------
@@ -342,6 +345,12 @@ Route::middleware(['auth', 'role:professor'])
         Route::post('/courses/store', [CourseController::class, 'store'])
             ->name('courses.store');
 
+        Route::get('/courses/{course}/upload-status', [CourseController::class, 'uploadStatus'])
+            ->name('courses.upload-status');
+
+        Route::get('/courses/category-suggestions', [CourseController::class, 'categorySuggestions'])
+            ->name('courses.category-suggestions');
+
         Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])
             ->name('courses.edit');
 
@@ -350,6 +359,12 @@ Route::middleware(['auth', 'role:professor'])
 
         Route::post('/courses/{course}/submit-review', [CourseWorkflowController::class, 'submitForReview'])
             ->name('professor.courses.submit-review');
+
+        Route::post('/courses/{course}/archive', [CourseWorkflowController::class, 'archive'])
+            ->name('professor.courses.archive');
+
+        Route::post('/courses/{course}/restore', [CourseWorkflowController::class, 'restore'])
+            ->name('professor.courses.restore');
 
         Route::get('/quizzes', [ProfessorQuizController::class, 'index'])
             ->name('professor.quizzes.index');
@@ -364,7 +379,7 @@ Route::middleware(['auth', 'role:professor'])
         Route::post('/quizzes/answers/{answer}/grade', [ProfessorQuizController::class, 'gradeAnswer'])
             ->name('professor.quizzes.answers.grade');
 
-        Route::delete('/courses/{id}', [CourseController::class, 'destroy'])
+        Route::delete('/courses/{course}', [CourseController::class, 'destroy'])
             ->name('courses.delete');
 
         /*
@@ -394,6 +409,8 @@ Route::middleware(['auth', 'role:student'])
             ->name('student.dashboard');
         Route::get('/courses', [StudentDashboardController::class, 'courses'])
             ->name('student.courses');
+        Route::get('/favorites', [FavoriteCourseController::class, 'index'])
+            ->name('student.favorites');
         Route::get('/certificates', [CertificateController::class, 'index'])
             ->name('student.certificates.index');
         Route::get('/certificates/{enrollment}', [CertificateController::class, 'show'])
@@ -417,6 +434,12 @@ Route::middleware(['auth', 'role:student'])
             ->name('student.ai-tutor.history');
         Route::delete('/ai-tutor/clear', [AiTutorController::class, 'clear'])
             ->name('student.ai-tutor.clear');
+        Route::post('/ai-tutor/conversations', [AiTutorController::class, 'createConversation'])
+            ->name('student.ai-tutor.conversations.store');
+        Route::put('/ai-tutor/conversations/{id}', [AiTutorController::class, 'renameConversation'])
+            ->name('student.ai-tutor.conversations.rename');
+        Route::delete('/ai-tutor/conversations/{id}', [AiTutorController::class, 'deleteConversation'])
+            ->name('student.ai-tutor.conversations.destroy');
         Route::get('/premium', [SubscriptionController::class, 'checkout'])
             ->name('student.premium');
         Route::post('/premium/subscribe', [SubscriptionController::class, 'subscribe'])
@@ -478,6 +501,12 @@ Route::get('/courses/{course}', [CourseController::class, 'show'])
 Route::get('/courses/{course}/learn/{lesson?}', [CourseLearnController::class, 'show'])
     ->name('courses.learn');
 
+Route::get('/courses/{course}/video/stream', [CourseController::class, 'streamVideo'])
+    ->name('courses.video.stream');
+
+Route::get('/lessons/{lesson}/video/stream', [CourseController::class, 'streamLesson'])
+    ->name('lessons.video.stream');
+
 Route::middleware('auth')->group(function () {
     Route::post('/courses/{course}/lessons/{lesson}/complete', [CourseLearnController::class, 'complete'])
         ->name('courses.lessons.complete');
@@ -501,11 +530,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifications/read-all', [PlatformNotificationController::class, 'markAllRead'])
         ->name('notifications.read-all');
 
-    Route::post('/courses/{id}/rate', [ReviewController::class, 'store'])
+    Route::post('/courses/{course}/rate', [ReviewController::class, 'store'])
         ->name('courses.rate');
-});
 
-Route::get('/firebase-test', [FirebaseTestController::class, 'index']);
+    Route::post('/courses/{course}/favorite', [FavoriteCourseController::class, 'store'])
+        ->name('courses.favorite');
+    Route::delete('/courses/{course}/favorite', [FavoriteCourseController::class, 'destroy'])
+        ->name('courses.unfavorite');
+});
 
 Route::post('/webhooks/stripe', [StripeWebhookController::class, 'handle'])
     ->withoutMiddleware([ValidateCsrfToken::class])

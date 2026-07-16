@@ -9,8 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
     <link rel="stylesheet" href="{{ asset('css/tokens.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/brand.css') }}">
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
     <link rel="stylesheet" href="{{ asset('css/course-detail.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/course-card.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/course-experience.css') }}">
 </head>
 <body class="course-detail-page">
 
@@ -33,287 +36,424 @@
     <div class="course-flash course-flash--error">{{ session('error') }}</div>
 @endif
 
-<section class="course-hero">
-    <div class="course-hero__inner">
-        <div class="course-hero__content">
-            @if(!empty($tags))
-                <div class="course-hero__tags">
-                    <span class="course-hero__accent"></span>
-                    <span>{{ implode(', ', array_slice($tags, 0, 3)) }}</span>
-                </div>
-            @endif
+@php
+    $videoUrl = $course->videoUrl();
+    $thumbUrl = $course->thumbnailUrl();
+    $isYoutube = $videoUrl && (str_contains($videoUrl, 'youtube.com') || str_contains($videoUrl, 'youtu.be') || str_contains($videoUrl, 'vimeo.com'));
+@endphp
 
-            <h1 class="course-hero__title">{{ $course->title }}</h1>
-            <p class="course-hero__desc">{{ $course->short_description ?? Str::limit($course->description, 220) }}</p>
-
-            <div class="course-hero__stats">
-                <div class="course-hero__stat">
-                    <i class="fas fa-users"></i>
-                    <span>{{ number_format($heroStats['enrollments']) }} étudiants inscrits</span>
-                </div>
-                <div class="course-hero__stat">
-                    <span class="course-stars">
-                        @for($i = 1; $i <= 5; $i++)
-                            <i class="fas fa-star{{ $i <= round($heroStats['rating']) ? '' : ' course-star--empty' }}"></i>
-                        @endfor
-                    </span>
-                    <span>{{ number_format($heroStats['rating'], 2) }} ({{ $heroStats['reviewsCount'] }} avis)</span>
-                </div>
+<main class="sw-course-detail">
+    <section class="sw-section-shell">
+        <div class="sw-course-detail__hero">
+            <div style="display:grid; gap:24px;">
+                <x-course-header class="sw-surface" :course="$course" :hero-stats="$heroStats" :tags="$tags" />
+                <x-course-player
+                    :title="$course->title"
+                    :thumbnail="$thumbUrl"
+                    :video-url="$videoUrl"
+                    :is-embed="$isYoutube"
+                    player-id="cswPlayer"
+                />
             </div>
+
+            <aside class="sw-course-aside">
+                <div class="sw-course-price-card sw-surface">
+                    <img src="{{ $thumbUrl }}" alt="{{ $course->title }}" class="sw-course-price-card__thumb">
+                    <div class="sw-course-price-card__price">
+                        @if($course->isFree()) Gratuit @else {{ number_format($course->price, 0, ',', ' ') }} XOF @endif
+                    </div>
+
+                    @if($course->is_premium_only)
+                        <span class="course-badge-premium"><i class="fas fa-crown"></i> Premium</span>
+                    @endif
+
+                    @auth
+                        @if(auth()->user()->isStudent())
+                            @if($isEnrolled)
+                                <a href="{{ route('courses.learn', [$course, $continueLesson?->id]) }}" class="btn btn-primary course-cta">
+                                    <i class="fas fa-play"></i> Continuer l'apprentissage
+                                </a>
+                                @if($progressPercent > 0)
+                                    <div class="course-progress-mini">
+                                        <div class="course-progress-mini__bar" style="width: {{ $progressPercent }}%"></div>
+                                    </div>
+                                    <span class="course-progress-mini__label">{{ $progressPercent }}% complété</span>
+                                @endif
+                                <div class="course-lesson-nav">
+                                    @if($previousLesson)
+                                        <a href="{{ route('courses.learn', [$course, $previousLesson]) }}" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Précédent</a>
+                                    @endif
+                                    @if($nextLesson)
+                                        <a href="{{ route('courses.learn', [$course, $nextLesson]) }}" class="btn btn-outline btn-sm">Suivant <i class="fas fa-arrow-right"></i></a>
+                                    @endif
+                                </div>
+                            @else
+                                <a href="{{ $course->isFree() ? route('student.enrollment.confirm', $course) : route('student.checkout.course', $course) }}" class="btn btn-primary course-cta btn-glow">
+                                    <i class="fas fa-{{ $course->isFree() ? 'user-plus' : 'lock' }}"></i>
+                                    {{ $course->isFree() ? 'S\'inscrire gratuitement' : 'Acheter et s\'inscrire' }}
+                                </a>
+                            @endif
+
+                            @if($isFavorited)
+                                <form method="POST" action="{{ route('courses.unfavorite', $course) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline course-cta-secondary"><i class="fas fa-heart"></i> Retirer des favoris</button>
+                                </form>
+                            @else
+                                <form method="POST" action="{{ route('courses.favorite', $course) }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-outline course-cta-secondary"><i class="far fa-heart"></i> Ajouter aux favoris</button>
+                                </form>
+                            @endif
+                        @elseif(auth()->user()->isAdmin() || (int) $course->user_id === (int) auth()->id())
+                            <a href="{{ route('courses.learn', $course) }}" class="btn btn-primary course-cta"><i class="fas fa-eye"></i> Prévisualiser</a>
+                        @endif
+                    @else
+                        <a href="{{ route('login') }}" class="btn btn-primary course-cta">Se connecter pour s'inscrire</a>
+                    @endauth
+
+                    <div class="sw-course-mini-meta">
+                        <span><i class="fas fa-users"></i> {{ number_format($heroStats['enrollments']) }} étudiants</span>
+                        <span><i class="fas fa-eye"></i> {{ number_format($heroStats['views']) }} vues</span>
+                        <span><i class="fas fa-clock"></i> {{ $heroStats['durationLabel'] }}</span>
+                        <span><i class="fas fa-calendar"></i> {{ $heroStats['publishedAt'] }}</span>
+                        <span><i class="fas fa-signal"></i> {{ collect($specifications)->firstWhere('label', 'Niveau')['value'] ?? 'Tous niveaux' }}</span>
+                    </div>
+
+                    <div class="sw-course-share">
+                        <button type="button" data-copy-share aria-label="Copier le lien"><i class="fas fa-share-nodes"></i></button>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode($shareUrl) }}" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://twitter.com/intent/tweet?url={{ urlencode($shareUrl) }}&text={{ urlencode($course->title) }}" target="_blank" rel="noopener" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode($shareUrl) }}" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <div class="sw-course-panel sw-surface">
+                    <div class="sw-course-panel__head">
+                        <h2>Ce cours comprend</h2>
+                    </div>
+                    <div class="sw-course-mini-meta">
+                        @foreach($specifications as $spec)
+                            <span><i class="fas {{ $spec['icon'] }}"></i> {{ $spec['label'] }} : {{ $spec['value'] }}</span>
+                        @endforeach
+                    </div>
+                </div>
+            </aside>
         </div>
 
-        <aside class="course-enroll-card">
-            <div class="course-enroll-card__media">
-                <img src="{{ $course->thumbnailUrl() }}" alt="{{ $course->title }}">
-                @if($course->videoUrl())
-                    <button type="button" class="course-enroll-card__play" aria-label="Aperçu vidéo">
-                        <i class="fas fa-play"></i>
-                    </button>
-                @endif
-            </div>
-
-            <div class="course-enroll-card__body">
-                <div class="course-enroll-card__price">
-                    @if($course->isFree())
-                        Gratuit
-                    @else
-                        {{ number_format($course->price, 0, ',', ' ') }} XOF
-                    @endif
-                </div>
-
-                @if($course->is_premium_only)
-                    <span class="course-badge-premium"><i class="fas fa-crown"></i> Premium</span>
-                @endif
-
-                @auth
-                    @if(auth()->user()->isStudent())
-                        @if($isEnrolled)
-                            <a href="{{ route('courses.learn', $course) }}" class="btn btn-primary course-cta">
-                                <i class="fas fa-play"></i> Commencer le cours
-                            </a>
-                            @if($progressPercent > 0)
-                                <div class="course-progress-mini">
-                                    <div class="course-progress-mini__bar" style="width: {{ $progressPercent }}%"></div>
-                                </div>
-                                <span class="course-progress-mini__label">{{ $progressPercent }}% complété</span>
-                            @endif
-                            <form method="POST" action="{{ route('student.enrollment.cancel', $activeEnrollment) }}" onsubmit="return confirm('Annuler l\'inscription ?')">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-outline course-cta-secondary">Annuler l'inscription</button>
-                            </form>
-                        @else
-                            <a href="{{ $course->isFree() ? route('student.enrollment.confirm', $course) : route('student.checkout.course', $course) }}" class="btn btn-primary course-cta btn-glow">
-                                <i class="fas fa-{{ $course->isFree() ? 'user-plus' : 'lock' }}"></i>
-                                {{ $course->isFree() ? 'S\'inscrire gratuitement' : 'Acheter et s\'inscrire' }}
-                            </a>
-                        @endif
-                    @elseif(auth()->user()->isAdmin() || (int) $course->user_id === (int) auth()->id())
-                        <a href="{{ route('courses.learn', $course) }}" class="btn btn-primary course-cta">
-                            <i class="fas fa-eye"></i> Prévisualiser le contenu
-                        </a>
-                    @endif
-                @else
-                    <a href="{{ route('login') }}" class="btn btn-primary course-cta">Se connecter pour s'inscrire</a>
-                @endauth
-
-                <div class="course-includes">
-                    <h3>Ce cours comprend</h3>
-                    <ul>
-                        <li><i class="fas fa-book-open"></i> {{ $totalLessons }} leçons</li>
-                        <li><i class="fas fa-clock"></i> {{ $heroStats['durationLabel'] }} de contenu</li>
-                        <li><i class="fas fa-signal"></i> {{ collect($specifications)->firstWhere('label', 'Niveau')['value'] ?? 'Tous niveaux' }}</li>
-                        <li><i class="fas fa-certificate"></i> Certificat de fin</li>
-                        <li><i class="fas fa-infinity"></i> Accès illimité</li>
-                    </ul>
-                </div>
-            </div>
-        </aside>
-    </div>
-</section>
-
-<main class="course-main">
-    <div class="course-main__grid">
-        <div class="course-content">
-            <nav class="course-tabs" role="tablist">
-                <button type="button" class="course-tab is-active" data-tab="overview">Aperçu</button>
-                <button type="button" class="course-tab" data-tab="topics">Programme</button>
-                <button type="button" class="course-tab" data-tab="instructor">Instructeur</button>
-                <button type="button" class="course-tab" data-tab="feedback">Avis</button>
-            </nav>
-
-            <div class="course-tab-panel is-active" id="tab-overview">
-                <div class="course-section">
-                    <h2>À propos de ce cours</h2>
-                    <div class="course-section__line"></div>
-                    <div class="course-prose">{!! nl2br(e($course->description)) !!}</div>
-                </div>
+        <div class="sw-course-content">
+            <div class="sw-course-panels">
+                <section class="sw-course-main-panel sw-surface">
+                    <div class="sw-course-panel__head">
+                        <h2>À propos de ce cours</h2>
+                        <p>Une présentation claire, premium et orientée conversion.</p>
+                    </div>
+                    <div class="sw-course-prose">{!! nl2br(e($course->description)) !!}</div>
+                </section>
 
                 @if(!empty($course->objectives))
-                    <div class="course-section">
-                        <h2>Qu'allez-vous apprendre ?</h2>
-                        <div class="course-section__line"></div>
-                        <div class="course-objectives">
+                    <section class="sw-course-main-panel sw-surface">
+                        <div class="sw-course-panel__head">
+                            <h2>Qu'allez-vous apprendre ?</h2>
+                            <p>Les objectifs clés de ce parcours.</p>
+                        </div>
+                        <div class="sw-course-objectives">
                             @foreach($course->objectives as $objective)
-                                <div class="course-objective">
-                                    <i class="fas fa-check"></i>
+                                <div class="sw-course-objective">
+                                    <i class="fas fa-check-circle"></i>
                                     <span>{{ $objective }}</span>
                                 </div>
                             @endforeach
                         </div>
-                    </div>
+                    </section>
                 @endif
 
                 @if(!empty($course->requirements))
-                    <div class="course-section">
-                        <h2>Prérequis</h2>
-                        <div class="course-section__line"></div>
-                        <ul class="course-list">
+                    <section class="sw-course-main-panel sw-surface">
+                        <div class="sw-course-panel__head">
+                            <h2>Prérequis</h2>
+                            <p>Ce qu'il faut connaître avant de commencer.</p>
+                        </div>
+                        <div class="sw-course-objectives">
                             @foreach($course->requirements as $requirement)
-                                <li>{{ $requirement }}</li>
+                                <div class="sw-course-objective">
+                                    <i class="fas fa-circle-dot"></i>
+                                    <span>{{ $requirement }}</span>
+                                </div>
                             @endforeach
-                        </ul>
-                    </div>
+                        </div>
+                    </section>
                 @endif
-            </div>
 
-            <div class="course-tab-panel" id="tab-topics">
-                <div class="course-topics-header">
-                    <h2>Programme du cours</h2>
-                    <div class="course-topics-meta">
-                        <span><strong>{{ $totalLessons }}</strong> leçons</span>
-                        <span><strong>{{ $heroStats['durationLabel'] }}</strong> au total</span>
+                <section class="sw-course-main-panel sw-surface">
+                    <div class="sw-course-panel__head">
+                        <h2>Programme du cours</h2>
+                        <p><strong>{{ $totalLessons }}</strong> leçons · <strong>{{ $heroStats['durationLabel'] }}</strong> au total</p>
                     </div>
-                </div>
-                <div class="course-section__line"></div>
-
-                @forelse($modules as $index => $module)
-                    <div class="course-accordion {{ $index === 0 ? 'is-open' : '' }}" data-accordion>
-                        <button type="button" class="course-accordion__trigger">
-                            <span>{{ $module['title'] }}</span>
-                            <span class="course-accordion__meta">{{ $module['lessonCount'] }} leçons</span>
-                            <i class="fas fa-plus course-accordion__icon"></i>
-                        </button>
-                        <div class="course-accordion__body">
-                            @if($module['description'])
-                                <p class="course-accordion__desc">{{ $module['description'] }}</p>
-                            @endif
-                            <ul class="course-lesson-list">
-                                @foreach($module['lessons'] as $lesson)
-                                    <li class="course-lesson-item {{ $lesson['isCompleted'] ? 'is-done' : '' }}">
-                                        <i class="fas {{ $lesson['typeIcon'] }} course-lesson-item__icon"></i>
-                                        <span class="course-lesson-item__title">{{ $lesson['title'] }}</span>
+                    <div class="sw-course-program">
+                        @forelse($modules as $module)
+                            <div class="sw-course-panel__head" style="margin:10px 0 2px;">
+                                <h2 style="font-size:1.05rem;">{{ $module['title'] }}</h2>
+                                @if(!empty($module['description']))
+                                    <p>{{ $module['description'] }}</p>
+                                @endif
+                            </div>
+                            @foreach($module['lessons'] as $lesson)
+                                <div class="sw-course-program__item">
+                                    <i class="fas {{ $lesson['typeIcon'] }}"></i>
+                                    <div>
+                                        <strong>{{ $lesson['title'] }}</strong>
                                         @if($lesson['isPreview'])
-                                            <span class="course-lesson-item__badge">Aperçu</span>
+                                            <small> · Aperçu disponible</small>
                                         @endif
-                                        @if($lesson['isCompleted'])
-                                            <i class="fas fa-check-circle course-lesson-item__done"></i>
-                                        @endif
-                                        <span class="course-lesson-item__duration">{{ $lesson['duration'] }}</span>
-                                        @if($lesson['isAccessible'])
-                                            <a href="{{ route('courses.learn', [$course, $lesson['id']]) }}" class="course-lesson-item__link">Ouvrir</a>
-                                        @else
-                                            <span class="course-lesson-item__locked" title="Inscription requise"><i class="fas fa-lock"></i></span>
-                                        @endif
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
+                                    </div>
+                                    <small>{{ $lesson['duration'] }}</small>
+                                    @if($lesson['isAccessible'])
+                                        <a href="{{ route('courses.learn', [$course, $lesson['id']]) }}" class="btn btn-outline btn-sm">Ouvrir</a>
+                                    @else
+                                        <span title="Inscription requise"><i class="fas fa-lock"></i></span>
+                                    @endif
+                                </div>
+                            @endforeach
+                        @empty
+                            <p class="sw-empty-state">Le programme sera bientôt disponible.</p>
+                        @endforelse
                     </div>
-                @empty
-                    <p class="course-empty">Le programme sera bientôt disponible.</p>
-                @endforelse
+                </section>
+
+                <section class="sw-course-main-panel sw-surface">
+                    <div class="sw-course-panel__head">
+                        <h2>Statistiques du cours</h2>
+                        <p>Indicateurs mis à jour depuis vos données réelles.</p>
+                    </div>
+                    <div class="sw-course-stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
+                        <div class="sw-course-stat-card"><strong>{{ number_format($heroStats['enrollments']) }}</strong><span>Étudiants</span></div>
+                        <div class="sw-course-stat-card"><strong>{{ number_format($heroStats['views']) }}</strong><span>Vues</span></div>
+                        <div class="sw-course-stat-card"><strong>{{ $heroStats['durationLabel'] }}</strong><span>Durée</span></div>
+                        <div class="sw-course-stat-card"><strong>{{ number_format($heroStats['rating'], 1) }}</strong><span>Note moyenne</span></div>
+                    </div>
+                </section>
+
+                <section class="sw-course-main-panel sw-surface">
+                    <div class="sw-course-panel__head">
+                        <h2>Avis des étudiants</h2>
+                        <p>Retours authentiques de la communauté StudyWays.</p>
+                    </div>
+
+                    @auth
+                        @if(auth()->user()->isStudent() && $isEnrolled)
+                            <form method="POST" action="{{ route('courses.rate', $course) }}" class="course-review-form">
+                                @csrf
+                                <label>Votre note
+                                    <select name="rating" class="form-input" required>
+                                        @for($i = 5; $i >= 1; $i--)
+                                            <option value="{{ $i }}" @selected(old('rating', $userReview?->rating) == $i)>{{ $i }} étoile{{ $i > 1 ? 's' : '' }}</option>
+                                        @endfor
+                                    </select>
+                                </label>
+                                <label>Commentaire
+                                    <textarea name="comment" class="form-input" rows="3" placeholder="Partagez votre expérience...">{{ old('comment', $userReview?->comment) }}</textarea>
+                                </label>
+                                <button type="submit" class="btn btn-primary btn-sm">Publier mon avis</button>
+                            </form>
+                        @endif
+                    @endauth
+
+                    <div class="sw-review-list">
+                        @forelse($course->reviews as $review)
+                            <article class="sw-review-card">
+                                <div class="sw-review-card__head">
+                                    <strong>{{ $review->user?->name }}</strong>
+                                    <span>{{ $review->created_at?->translatedFormat('j F Y') }}</span>
+                                </div>
+                                <x-course-rating :rating="$review->rating" :reviews="0" size="sm" :show-count="false" />
+                                <p style="margin:10px 0 0; color:#4b5563; line-height:1.7;">{{ $review->comment }}</p>
+                            </article>
+                        @empty
+                            <p class="sw-empty-state">Aucun avis pour le moment. Soyez le premier à commenter.</p>
+                        @endforelse
+                    </div>
+                </section>
             </div>
 
-            <div class="course-tab-panel" id="tab-instructor">
-                <div class="course-section">
-                    <h2>À propos de l'instructeur</h2>
-                    <div class="course-section__line"></div>
-                    <div class="course-instructor-card">
-                        <img src="{{ $instructorStats['avatar'] }}" alt="{{ $instructorStats['name'] }}" class="course-instructor-card__avatar">
-                        <div>
-                            <h3>{{ $instructorStats['name'] }}</h3>
-                            @if(!empty($instructorStats['specialization']))
-                                <p class="course-instructor-card__specialization">{{ $instructorStats['specialization'] }}</p>
-                            @endif
-                            <div class="course-instructor-card__rating">
-                                @for($i = 1; $i <= 5; $i++)
-                                    <i class="fas fa-star{{ $i <= round($instructorStats['rating']) ? '' : ' course-star--empty' }}"></i>
-                                @endfor
-                                <span>{{ number_format($instructorStats['rating'], 2) }} ({{ $instructorStats['reviewsCount'] }} avis)</span>
-                            </div>
-                            <p>{{ $instructorStats['bio'] ?? 'Instructeur passionné par le partage de connaissances et l\'accompagnement des étudiants.' }}</p>
-                            <div class="course-instructor-card__stats">
-                                <span><i class="fas fa-book"></i> {{ $instructorStats['coursesCount'] }} cours</span>
-                                <span><i class="fas fa-users"></i> {{ number_format($instructorStats['studentsCount']) }} étudiants</span>
-                            </div>
-                        </div>
+            <aside class="sw-course-aside">
+                <section class="sw-course-panel sw-surface">
+                    <div class="sw-course-panel__head">
+                        <h2>Formateur</h2>
+                        <p>Présentation de l'instructeur du cours.</p>
                     </div>
-                </div>
-            </div>
+                    <x-teacher-card :instructor="$instructorStats" />
+                </section>
 
-            <div class="course-tab-panel" id="tab-feedback">
-                <div class="course-section">
-                    <h2>Avis des étudiants</h2>
-                    <div class="course-section__line"></div>
-                    @forelse($course->reviews as $review)
-                        <article class="course-review">
-                            <div class="course-review__head">
-                                <strong>{{ $review->user?->name }}</strong>
-                                <span>{{ $review->created_at?->translatedFormat('j F Y') }}</span>
-                            </div>
-                            <div class="course-review__stars">
-                                @for($i = 1; $i <= 5; $i++)
-                                    <i class="fas fa-star{{ $i <= $review->rating ? '' : ' course-star--empty' }}"></i>
-                                @endfor
-                            </div>
-                            <p>{{ $review->comment }}</p>
-                        </article>
-                    @empty
-                        <p class="course-empty">Aucun avis pour le moment.</p>
-                    @endforelse
-                </div>
-            </div>
+                @if(!empty($tags))
+                    <section class="sw-course-panel sw-surface">
+                        <div class="sw-course-panel__head">
+                            <h2>Tags</h2>
+                            <p>Technologies et thèmes associés.</p>
+                        </div>
+                        <div class="sw-course-header__tags">
+                            @foreach($tags as $tag)
+                                <span>{{ $tag }}</span>
+                            @endforeach
+                        </div>
+                    </section>
+                @endif
+            </aside>
         </div>
 
-        <aside class="course-sidebar">
-            <div class="course-sidebar-card">
-                <h3>Ce cours comprend</h3>
-                <div class="course-section__line"></div>
-                <ul class="course-spec-list">
-                    @foreach($specifications as $spec)
-                        <li>
-                            <i class="fas {{ $spec['icon'] }}"></i>
-                            <span class="course-spec-list__label">{{ $spec['label'] }}</span>
-                            <span class="course-spec-list__value">{{ $spec['value'] }}</span>
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
-
-            <div class="course-sidebar-card">
-                <h4>Partager</h4>
-                <div class="course-share">
-                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode($shareUrl) }}" target="_blank" rel="noopener" class="course-share__btn course-share__btn--fb" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://twitter.com/intent/tweet?url={{ urlencode($shareUrl) }}&text={{ urlencode($course->title) }}" target="_blank" rel="noopener" class="course-share__btn course-share__btn--tw" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode($shareUrl) }}" target="_blank" rel="noopener" class="course-share__btn course-share__btn--in" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                </div>
-            </div>
-
-            @if(!empty($tags))
-                <div class="course-sidebar-card">
-                    <h4>Tags</h4>
-                    <div class="course-section__line"></div>
-                    <div class="course-tags">
-                        @foreach($tags as $tag)
-                            <span class="course-tag">{{ $tag }}</span>
-                        @endforeach
+        @if($relatedCourses->isNotEmpty())
+            <section class="sw-related-section">
+                <div class="sw-home-catalog-head">
+                    <div class="sw-home-catalog-copy">
+                        <h2 style="font-size:2rem;">Cours similaires</h2>
+                        <p>Suggestions basées sur la catégorie, les tags et les mots-clés.</p>
                     </div>
                 </div>
-            @endif
-        </aside>
-    </div>
+                <div class="sw-courses-grid">
+                    @foreach($relatedCourses as $related)
+                        <x-course-card :course="$related" cta-label="Voir les détails" />
+                    @endforeach
+                </div>
+            </section>
+        @endif
+    </section>
 </main>
 
 <script src="{{ asset('js/course-detail.js') }}"></script>
+<script>
+document.querySelector('[data-copy-share]')?.addEventListener('click', async () => {
+    try {
+        await navigator.clipboard.writeText(@json($shareUrl));
+        alert('Lien copié !');
+    } catch (e) {
+        prompt('Copiez ce lien :', @json($shareUrl));
+    }
+});
+
+/* ── Premium CSW Player ─────────────────────────────────────── */
+(function () {
+    const player  = document.getElementById('cswPlayer');
+    if (!player) {
+        return;
+    }
+
+    const cover = player.querySelector('[data-player-cover]');
+    const media = player.querySelector('[data-player-media]');
+    const loader = player.querySelector('[data-player-loader]');
+    const errBox = player.querySelector('[data-player-error]');
+    const playBtn = player.querySelector('[data-player-trigger]');
+    const retryBtn = player.querySelector('[data-player-retry]');
+
+    const videoUrl = player.dataset.videoUrl || '';
+    const isEmbed  = player.dataset.isEmbed === '1';
+    let launching = false;
+
+    function showLoader() {
+        loader.hidden = false;
+        errBox.hidden = true;
+    }
+
+    function showError() {
+        launching = false;
+        loader.hidden = true;
+        errBox.hidden = false;
+        media.hidden = true;
+    }
+
+    function showMedia() {
+        launching = false;
+        loader.hidden = true;
+        errBox.hidden = true;
+        media.hidden = false;
+    }
+
+    function hideCover() {
+        cover.classList.add('is-fading');
+        cover.addEventListener('transitionend', () => {
+            cover.style.display = 'none';
+        }, { once: true });
+        // Fallback if transitionend never fires (display already none, etc.)
+        setTimeout(() => {
+            if (cover.classList.contains('is-fading')) {
+                cover.style.display = 'none';
+            }
+        }, 500);
+    }
+
+    function launchPlayer() {
+        if (!videoUrl || launching) {
+            return;
+        }
+
+        launching = true;
+        media.innerHTML = '';
+        hideCover();
+        showLoader();
+
+        if (isEmbed) {
+            const sep = videoUrl.includes('?') ? '&' : '?';
+            const src = videoUrl + sep + 'autoplay=1&rel=0';
+            const iframe = document.createElement('iframe');
+            iframe.className = 'sw-video-player__iframe';
+            iframe.src = src;
+            iframe.title = 'Lecteur vidéo';
+            iframe.allowFullscreen = true;
+            iframe.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture';
+            iframe.onload = showMedia;
+            media.appendChild(iframe);
+            showMedia();
+            return;
+        }
+
+        const vid = document.createElement('video');
+        vid.className = 'sw-video-player__video';
+        vid.controls = true;
+        vid.autoplay = true;
+        vid.playsInline = true;
+        vid.preload = 'auto';
+        vid.src = videoUrl;
+
+        vid.addEventListener('loadeddata', () => {
+            showMedia();
+            vid.play().catch(() => {});
+        }, { once: true });
+
+        vid.addEventListener('error', showError, { once: true });
+
+        media.hidden = false;
+        media.appendChild(vid);
+    }
+
+    if (playBtn) {
+        playBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            launchPlayer();
+        });
+    }
+
+    if (cover && videoUrl) {
+        cover.style.cursor = 'pointer';
+        cover.addEventListener('click', (e) => {
+            if (e.target.closest('[data-player-trigger]')) {
+                return;
+            }
+            launchPlayer();
+        });
+    }
+
+    if (retryBtn) {
+        retryBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            launching = false;
+            media.innerHTML = '';
+            errBox.hidden = true;
+            launchPlayer();
+        });
+    }
+})();
+</script>
 </body>
 </html>

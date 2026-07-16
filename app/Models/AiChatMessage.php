@@ -9,6 +9,7 @@ class AiChatMessage extends Model
 {
     protected $fillable = [
         'user_id',
+        'conversation_id',
         'course_id',
         'lesson_id',
         'topic',
@@ -20,6 +21,11 @@ class AiChatMessage extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function conversation(): BelongsTo
+    {
+        return $this->belongsTo(AiConversation::class, 'conversation_id');
     }
 
     public function course(): BelongsTo

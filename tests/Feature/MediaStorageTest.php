@@ -40,7 +40,6 @@ test('avatar upload stores file locally and saves path in database', function ()
 
 test('professor can upload course thumbnail and video to local storage', function () {
     $professor = User::factory()->professor()->create();
-    $category = Category::query()->create(['name' => 'Web', 'slug' => 'web']);
 
     $thumbnail = UploadedFile::fake()->image('thumb.jpg', 1280, 720);
     $video = UploadedFile::fake()->create('promo.mp4', 1024, 'video/mp4');
@@ -49,12 +48,12 @@ test('professor can upload course thumbnail and video to local storage', functio
         ->post(route('courses.store'), [
             'title' => 'Cloud Storage Course',
             'description' => 'Learn media uploads',
-            'category_id' => $category->id,
+            'category' => 'Web',
             'thumbnail' => $thumbnail,
             'video' => $video,
             'price' => 0,
         ])
-        ->assertRedirect(route('professor.dashboard'))
+        ->assertRedirect(route('professor.courses.index'))
         ->assertSessionHas('success');
 
     $course = Course::query()->where('title', 'Cloud Storage Course')->first();
@@ -68,7 +67,7 @@ test('professor can upload course thumbnail and video to local storage', functio
     Storage::disk('public')->assertExists($course->video_path);
 
     expect($course->thumbnailUrl())->toContain($course->thumbnail)
-        ->and($course->videoUrl())->toContain($course->video_path);
+        ->and($course->videoUrl())->toBe(route('courses.video.stream', $course));
 });
 
 test('lesson upload stores resource_path and supports video playback url', function () {
@@ -98,7 +97,7 @@ test('lesson upload stores resource_path and supports video playback url', funct
 
     Storage::disk('public')->assertExists($lesson->resource_path);
 
-    expect($lesson->storedVideoUrl())->toContain($lesson->resource_path)
+    expect($lesson->storedVideoUrl())->toBe(route('lessons.video.stream', $lesson))
         ->and($lesson->resourceUrl())->toContain($lesson->resource_path);
 });
 
@@ -126,7 +125,7 @@ test('professor cannot upload lesson media for another professors course', funct
 
 test('media storage service resolves external urls unchanged', function () {
     $service = app(MediaStorageService::class);
-    $external = 'https://res.cloudinary.com/demo/image/upload/sample.jpg';
+    $external = 'https://example.com/assets/image.jpg';
 
     expect($service->url($external, MediaCategory::Avatar))->toBe($external)
         ->and($service->isExternalUrl($external))->toBeTrue()
@@ -134,11 +133,11 @@ test('media storage service resolves external urls unchanged', function () {
         ->and($service->isCloudStored('avatars/local.jpg'))->toBeFalse();
 });
 
-test('migrate media command requires cloudinary configuration', function () {
+test('migrate media command succeeds without external storage configuration', function () {
     config(['media.disk' => 'public']);
 
     $this->artisan('media:migrate-to-cloud')
-        ->assertFailed();
+        ->assertSuccessful();
 });
 
 test('avatar upload rejects invalid files', function () {

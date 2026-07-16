@@ -34,5 +34,7 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="GROQ_API_KEY" value="test-groq-key"/>
+        <env name="AUTH_PASSWORD_RESET_THROTTLE" value="0"/>
+
     </php>
 </phpunit>

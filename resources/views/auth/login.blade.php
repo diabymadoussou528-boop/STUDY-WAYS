@@ -173,10 +173,11 @@
             setTimeout(() => ripple.remove(), 600);
         });
 
-        // Submit loading state
+        // Submit loading state — never disable the button synchronously or
+        // some browsers cancel the POST before it leaves the page.
         document.getElementById('loginForm').addEventListener('submit', function() {
             loginBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Connexion...';
-            loginBtn.disabled = true;
+            loginBtn.setAttribute('aria-busy', 'true');
         });
     </script>
 </body>

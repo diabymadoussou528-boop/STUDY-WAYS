@@ -3,9 +3,38 @@
 @section('title', 'Mes cours')
 
 @section('content')
+@php
+    $currentTab = request('tab', 'all');
+    $filteredCourses = $courses->filter(function($course) use ($currentTab) {
+        $status = $course->status instanceof \App\Enums\CourseStatus ? $course->status->value : $course->status;
+        if ($currentTab === 'published') {
+            return $status === 'published';
+        } elseif ($currentTab === 'draft') {
+            return $status === 'draft';
+        } elseif ($currentTab === 'archived') {
+            return $status === 'archived';
+        }
+        return true; // 'all' shows all courses
+    });
+@endphp
+
 <x-admin-page-header kicker="Contenu pédagogique" title="Mes cours" subtitle="Gérez et publiez votre contenu.">
     <a href="{{ route('courses.create') }}" class="btn btn-primary btn-glow"><i class="fas fa-plus"></i> Nouveau cours</a>
 </x-admin-page-header>
+
+<div class="chart-tabs" style="margin-bottom: 20px;">
+    <a href="?tab=all" class="chart-tab {{ $currentTab === 'all' ? 'active' : '' }}" style="text-decoration:none;">Tous les cours</a>
+    <a href="?tab=published" class="chart-tab {{ $currentTab === 'published' ? 'active' : '' }}" style="text-decoration:none;">Publiés</a>
+    <a href="?tab=draft" class="chart-tab {{ $currentTab === 'draft' ? 'active' : '' }}" style="text-decoration:none;">Brouillons</a>
+    <a href="?tab=archived" class="chart-tab {{ $currentTab === 'archived' ? 'active' : '' }}" style="text-decoration:none;">Archivés</a>
+</div>
+
+@if(session('success'))
+    <div class="flash-toast flash-toast--success" style="margin-bottom:16px;">
+        <i class="fas fa-check-circle"></i>
+        {{ session('success') }}
+    </div>
+@endif
 
 <section class="widget-card glass-card reveal-up">
     <div class="widget-body widget-body--flush">
@@ -23,7 +52,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($courses as $course)
+                    @forelse($filteredCourses as $course)
+                        @php $status = $course->status instanceof \App\Enums\CourseStatus ? $course->status : \App\Enums\CourseStatus::tryFrom($course->status ?? 'draft'); @endphp
                         <tr>
                             <td>
                                 <div style="display:flex; align-items:center; gap:12px;">
@@ -41,7 +71,6 @@
                                 </div>
                             </td>
                             <td>
-                                @php $status = $course->status instanceof \App\Enums\CourseStatus ? $course->status : \App\Enums\CourseStatus::tryFrom($course->status ?? 'draft'); @endphp
                                 <span class="badge {{ $status?->badgeClass() ?? 'badge-admin' }}">{{ $status?->label() ?? '—' }}</span>
                             </td>
                             <td>{{ number_format($course->enrollments_count ?? 0) }}</td>
@@ -50,13 +79,25 @@
                             <td>{{ number_format($course->views ?? 0) }}</td>
                             <td>
                                 <div class="row-actions" style="justify-content: flex-end; gap: 8px;">
-                                    <a href="{{ route('courses.show', $course) }}" class="btn btn-outline btn-sm" title="Aperçu"><i class="fas fa-eye"></i></a>
-                                    <a href="{{ route('courses.edit', $course) }}" class="btn btn-outline btn-sm" title="Modifier"><i class="fas fa-edit"></i></a>
-                                    
-                                    @if(($status ?? null) === \App\Enums\CourseStatus::Draft)
-                                        <form method="POST" action="{{ route('professor.courses.submit-review', $course) }}" style="display:inline;">
+                                    @if($status !== \App\Enums\CourseStatus::Archived)
+                                        <a href="{{ route('courses.show', $course) }}" class="btn btn-outline btn-sm" title="Aperçu"><i class="fas fa-eye"></i></a>
+                                        <a href="{{ route('courses.edit', $course) }}" class="btn btn-outline btn-sm" title="Modifier"><i class="fas fa-edit"></i></a>
+                                        
+                                        @if($status === \App\Enums\CourseStatus::Draft)
+                                            <form method="POST" action="{{ route('professor.courses.submit-review', $course) }}" style="display:inline;">
+                                                @csrf
+                                                <button class="btn btn-primary btn-sm" title="Soumettre pour revue"><i class="fas fa-paper-plane"></i></button>
+                                            </form>
+                                        @endif
+
+                                        <form method="POST" action="{{ route('professor.courses.archive', $course) }}" style="display:inline;">
                                             @csrf
-                                            <button class="btn btn-primary btn-sm" title="Soumettre pour revue"><i class="fas fa-paper-plane"></i></button>
+                                            <button class="btn btn-outline btn-sm" title="Archiver"><i class="fas fa-archive"></i></button>
+                                        </form>
+                                    @else
+                                        <form method="POST" action="{{ route('professor.courses.restore', $course) }}" style="display:inline;">
+                                            @csrf
+                                            <button class="btn btn-outline btn-sm" title="Restaurer"><i class="fas fa-undo"></i></button>
                                         </form>
                                     @endif
 
@@ -73,7 +114,7 @@
                             <td colspan="7">
                                 <div class="empty-state premium-empty">
                                     <i class="fas fa-book-open"></i>
-                                    <p>Aucun cours. Créez votre premier contenu.</p>
+                                    <p>Aucun cours trouvé dans cet onglet.</p>
                                 </div>
                             </td>
                         </tr>

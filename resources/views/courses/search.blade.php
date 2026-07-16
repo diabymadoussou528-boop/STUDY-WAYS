@@ -11,10 +11,11 @@
     <link rel="stylesheet" href="{{ asset('css/tokens.css') }}">
     <link rel="stylesheet" href="{{ asset('css/brand.css') }}">
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/course-card.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/course-experience.css') }}">
     <link rel="stylesheet" href="{{ asset('css/course-search.css') }}">
 </head>
 <body>
-
 <header class="navbar scrolled" id="navbar">
     <x-sw-brand :href="route('home')" variant="default" size="lg" />
     <div class="nav-tools" style="flex:1;max-width:720px;margin:0 24px;">
@@ -38,8 +39,7 @@
 </header>
 
 <main class="course-search-page">
-    <div class="course-search-container">
-
+    <div class="sw-section-shell">
         @if($query)
             <header class="course-search-header">
                 <h1>
@@ -84,14 +84,13 @@
                         </a>
                     @endif
                 </h2>
-                <div class="course-search-group__list">
+                <div class="sw-courses-grid">
                     @foreach($group['courses'] as $course)
-                        <x-course-search-row :course="$course" />
+                        <x-course-card :course="$course" cta-label="Voir les détails" />
                     @endforeach
                 </div>
             </section>
         @endforeach
-
     </div>
 </main>
 

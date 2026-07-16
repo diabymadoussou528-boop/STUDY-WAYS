@@ -7,6 +7,7 @@ use App\Notifications\ResetPasswordNotification;
 use App\Services\MediaStorageService;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -26,6 +27,7 @@ class User extends Authenticatable
         'avatar',
         'bio',
         'specialization',
+        'email_verified_at',
         'is_active',
         'is_super_admin',
         'first_login',
@@ -148,6 +150,11 @@ class User extends Authenticatable
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class);
+    }
+
+    public function favoriteCourses(): BelongsToMany
+    {
+        return $this->belongsToMany(Course::class, 'course_favorites')->withTimestamps();
     }
 
     public function taughtCourses(): HasMany

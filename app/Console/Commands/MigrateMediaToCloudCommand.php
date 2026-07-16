@@ -8,120 +8,161 @@ use App\Models\Lesson;
 use App\Models\User;
 use App\Services\MediaStorageService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
 
 class MigrateMediaToCloudCommand extends Command
 {
-    protected $signature = 'media:migrate-to-cloud {--dry-run : Preview changes without uploading}';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'media:migrate-to-cloud
+                            {--dry-run : Preview what would be migrated without making changes}
+                            {--force : Skip confirmation prompt}';
 
-    protected $description = 'Migrate locally stored media files to Cloudinary';
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Migrate locally stored media files to cloud (Google Drive) storage';
 
-    public function handle(MediaStorageService $mediaStorage): int
+    public function handle(MediaStorageService $media): int
     {
-        if (! $mediaStorage->usesCloudinary()) {
-            $this->error('Cloudinary is not configured. Set MEDIA_DISK=cloudinary and CLOUDINARY_* credentials in .env.');
+        if (config('media.disk') !== 'google') {
+            $this->info('Cloud storage is not configured. Set MEDIA_DISK=google and configure GOOGLE_DRIVE_* credentials to enable migration.');
 
-            return self::FAILURE;
+            return self::SUCCESS;
         }
 
         $dryRun = (bool) $this->option('dry-run');
-        $migrated = 0;
 
+        if ($dryRun) {
+            $this->warn('[DRY RUN] No files will be moved.');
+        }
+
+        $migrated = 0;
+        $skipped = 0;
+        $errors = 0;
+
+        // --- User avatars ---
         User::query()
             ->whereNotNull('avatar')
-            ->each(function (User $user) use ($mediaStorage, $dryRun, &$migrated) {
-                if ($this->shouldSkip($user->avatar, $mediaStorage)) {
-                    return;
-                }
+            ->where('avatar', 'not like', 'google://%')
+            ->where('avatar', 'not like', 'http%')
+            ->chunkById(50, function ($users) use ($dryRun, &$migrated, &$skipped, &$errors) {
+                foreach ($users as $user) {
+                    if (! Storage::disk('public')->exists($user->avatar)) {
+                        $this->line("  SKIP (file missing) avatar for user #{$user->id}");
+                        $skipped++;
 
-                if ($dryRun) {
-                    $this->line("Would migrate avatar for user #{$user->id}: {$user->avatar}");
-                    $migrated++;
+                        continue;
+                    }
 
-                    return;
-                }
+                    $this->line("  MIGRATE avatar: {$user->avatar}");
 
-                $cloudPath = $mediaStorage->migrateLocalToCloud($user->avatar, MediaCategory::Avatar);
-
-                if ($cloudPath !== null && $cloudPath !== $user->avatar) {
-                    $user->update(['avatar' => $cloudPath]);
-                    $this->info("Migrated avatar for user #{$user->id}");
-                    $migrated++;
+                    if (! $dryRun) {
+                        try {
+                            $stream = Storage::disk('public')->readStream($user->avatar);
+                            $newPath = 'google://'.$user->avatar;
+                            Storage::disk('google')->writeStream($user->avatar, $stream);
+                            Storage::disk('public')->delete($user->avatar);
+                            $user->updateQuietly(['avatar' => $newPath]);
+                            $migrated++;
+                        } catch (\Throwable $e) {
+                            $this->error("  ERROR: {$e->getMessage()}");
+                            $errors++;
+                        }
+                    } else {
+                        $migrated++;
+                    }
                 }
             });
 
+        // --- Course thumbnails & videos ---
         Course::query()
-            ->where(function ($query) {
-                $query->whereNotNull('thumbnail')->orWhereNotNull('video_path');
+            ->where(function ($q) {
+                $q->whereNotNull('thumbnail')
+                    ->where('thumbnail', 'not like', 'google://%')
+                    ->where('thumbnail', 'not like', 'http%');
             })
-            ->each(function (Course $course) use ($mediaStorage, $dryRun, &$migrated) {
-                foreach ([
-                    'thumbnail' => MediaCategory::CourseThumbnail,
-                    'video_path' => MediaCategory::CourseVideo,
-                ] as $column => $category) {
-                    $path = $course->{$column};
+            ->orWhere(function ($q) {
+                $q->whereNotNull('video_path')
+                    ->where('video_path', 'not like', 'google://%')
+                    ->where('video_path', 'not like', 'http%');
+            })
+            ->chunkById(20, function ($courses) use ($dryRun, &$migrated, &$skipped, &$errors) {
+                foreach ($courses as $course) {
+                    foreach (['thumbnail' => MediaCategory::CourseThumbnail, 'video_path' => MediaCategory::CourseVideo] as $field => $category) {
+                        if (blank($course->{$field})) {
+                            continue;
+                        }
 
-                    if ($this->shouldSkip($path, $mediaStorage)) {
-                        continue;
-                    }
+                        if (! Storage::disk('public')->exists($course->{$field})) {
+                            $skipped++;
 
-                    if ($dryRun) {
-                        $this->line("Would migrate course #{$course->id} {$column}: {$path}");
-                        $migrated++;
+                            continue;
+                        }
 
-                        continue;
-                    }
+                        $this->line("  MIGRATE course #{$course->id} {$field}: {$course->{$field}}");
 
-                    $cloudPath = $mediaStorage->migrateLocalToCloud($path, $category);
-
-                    if ($cloudPath !== null && $cloudPath !== $path) {
-                        $course->update([$column => $cloudPath]);
-                        $this->info("Migrated course #{$course->id} {$column}");
-                        $migrated++;
+                        if (! $dryRun) {
+                            try {
+                                $stream = Storage::disk('public')->readStream($course->{$field});
+                                Storage::disk('google')->writeStream($course->{$field}, $stream);
+                                Storage::disk('public')->delete($course->{$field});
+                                $course->updateQuietly([$field => 'google://'.$course->{$field}]);
+                                $migrated++;
+                            } catch (\Throwable $e) {
+                                $this->error("  ERROR: {$e->getMessage()}");
+                                $errors++;
+                            }
+                        } else {
+                            $migrated++;
+                        }
                     }
                 }
             });
 
+        // --- Lesson resources ---
         Lesson::query()
             ->whereNotNull('resource_path')
-            ->each(function (Lesson $lesson) use ($mediaStorage, $dryRun, &$migrated) {
-                if ($this->shouldSkip($lesson->resource_path, $mediaStorage)) {
-                    return;
-                }
+            ->where('resource_path', 'not like', 'google://%')
+            ->where('resource_path', 'not like', 'http%')
+            ->chunkById(50, function ($lessons) use ($dryRun, &$migrated, &$skipped, &$errors) {
+                foreach ($lessons as $lesson) {
+                    if (! Storage::disk('public')->exists($lesson->resource_path)) {
+                        $skipped++;
 
-                $category = $lesson->lesson_type?->value === 'video'
-                    ? MediaCategory::LessonVideo
-                    : MediaCategory::LessonResource;
+                        continue;
+                    }
 
-                if ($dryRun) {
-                    $this->line("Would migrate lesson #{$lesson->id}: {$lesson->resource_path}");
-                    $migrated++;
+                    $this->line("  MIGRATE lesson #{$lesson->id} resource_path: {$lesson->resource_path}");
 
-                    return;
-                }
-
-                $cloudPath = $mediaStorage->migrateLocalToCloud($lesson->resource_path, $category);
-
-                if ($cloudPath !== null && $cloudPath !== $lesson->resource_path) {
-                    $lesson->update(['resource_path' => $cloudPath]);
-                    $this->info("Migrated lesson #{$lesson->id}");
-                    $migrated++;
+                    if (! $dryRun) {
+                        try {
+                            $stream = Storage::disk('public')->readStream($lesson->resource_path);
+                            Storage::disk('google')->writeStream($lesson->resource_path, $stream);
+                            Storage::disk('public')->delete($lesson->resource_path);
+                            $lesson->updateQuietly(['resource_path' => 'google://'.$lesson->resource_path]);
+                            $migrated++;
+                        } catch (\Throwable $e) {
+                            $this->error("  ERROR: {$e->getMessage()}");
+                            $errors++;
+                        }
+                    } else {
+                        $migrated++;
+                    }
                 }
             });
 
         $this->newLine();
-        $this->info($dryRun
-            ? "Dry run complete. {$migrated} file(s) would be migrated."
-            : "Migration complete. {$migrated} file(s) migrated.");
+        $this->table(
+            ['Migrated', 'Skipped', 'Errors'],
+            [[$migrated, $skipped, $errors]]
+        );
 
-        return self::SUCCESS;
-    }
-
-    private function shouldSkip(?string $path, MediaStorageService $mediaStorage): bool
-    {
-        if (blank($path)) {
-            return true;
-        }
-
-        return $mediaStorage->isExternalUrl($path) || $mediaStorage->isCloudStored($path);
+        return $errors > 0 ? self::FAILURE : self::SUCCESS;
     }
 }

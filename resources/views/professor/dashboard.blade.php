@@ -52,63 +52,28 @@
     @endforeach
 </div>
 
-<div class="dash-grid reveal-up">
-    <section class="widget-card glass-card">
-        <div class="widget-header">
-            <div>
-                <h3 class="widget-title">Mes cours</h3>
-                <p class="widget-subtitle">Performance et gestion de votre contenu</p>
-            </div>
-            <a href="{{ route('professor.courses.index') }}" class="btn btn-outline btn-sm">Tout voir</a>
+<section class="widget-card glass-card reveal-up" style="margin-bottom:22px;">
+    <div class="widget-header">
+        <div>
+            <h3 class="widget-title">Mes cours</h3>
+            <p class="widget-subtitle">Aperçu premium de votre catalogue professeur</p>
         </div>
-        <div class="widget-body widget-body--flush">
-            <div class="table-scroll">
-                <table class="premium-table">
-                    <thead>
-                        <tr>
-                            <th>Cours</th>
-                            <th>Étudiants</th>
-                            <th>Leçons</th>
-                            <th>Note</th>
-                            <th>Vues</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($courses->take(8) as $course)
-                            <tr>
-                                <td>
-                                    <div class="table-course">
-                                        <span class="table-course-icon"><i class="fas fa-book"></i></span>
-                                        <span>{{ Str::limit($course->title, 34) }}</span>
-                                    </div>
-                                </td>
-                                <td>{{ number_format($course->enrollments_count ?? 0) }}</td>
-                                <td>{{ $course->lessons_count ?? 0 }}</td>
-                                <td>
-                                    <span class="rating-pill">★ {{ number_format((float) ($course->reviews_avg_rating ?? 0), 1) }}</span>
-                                </td>
-                                <td>{{ number_format($course->views ?? 0) }}</td>
-                                <td>
-                                    <a href="{{ route('courses.show', $course->id) }}" class="btn btn-outline btn-sm">Gérer</a>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6">
-                                    <div class="empty-state premium-empty">
-                                        <i class="fas fa-book-open"></i>
-                                        <p>Aucun cours publié. Créez votre premier contenu.</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+        <a href="{{ route('professor.courses.index') }}" class="btn btn-outline btn-sm">Tout gérer</a>
+    </div>
+    <div class="widget-body">
+        <div class="sw-courses-grid">
+            @forelse($courses->take(6) as $course)
+                <x-course-card :course="$course" cta-label="Voir le cours" />
+            @empty
+                <div class="empty-state premium-empty" style="grid-column:1/-1;">
+                    <i class="fas fa-book-open"></i>
+                    <p>Aucun cours publié. Créez votre premier contenu.</p>
+                    <a href="{{ route('courses.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;">Créer un cours</a>
+                </div>
+            @endforelse
         </div>
-    </section>
-</div>
+    </div>
+</section>
 
 <div class="dash-grid dash-grid--widgets reveal-up">
     <section class="widget-card glass-card">
@@ -193,4 +158,9 @@
     </section>
 </div>
 
+@endsection
+
+@section('styles')
+<link rel="stylesheet" href="{{ asset('css/course-card.css') }}">
+<link rel="stylesheet" href="{{ asset('css/course-experience.css') }}">
 @endsection

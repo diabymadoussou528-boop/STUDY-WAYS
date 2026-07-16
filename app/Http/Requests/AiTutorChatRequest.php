@@ -21,7 +21,8 @@ class AiTutorChatRequest extends FormRequest
             'course_id' => ['nullable', 'integer', 'exists:courses,id'],
             'lesson_id' => ['nullable', 'integer', 'exists:lessons,id'],
             'topic' => ['nullable', 'string', 'max:200'],
-            'mode' => ['nullable', 'string', 'in:chat,evaluation'],
+            'mode' => ['nullable', 'string', 'in:chat,evaluation,explain,examples,quiz,recommend'],
+            'conversation_id' => ['nullable', 'integer', 'exists:ai_conversations,id'],
         ];
     }
 }

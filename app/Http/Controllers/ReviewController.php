@@ -4,46 +4,36 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Review;
+use App\Services\EnrollmentService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | STORE OR UPDATE REVIEW
-    |--------------------------------------------------------------------------
-    */
-    public function store(Request $request, $id)
+    public function store(Request $request, Course $course, EnrollmentService $enrollmentService): RedirectResponse
     {
-        $request->validate([
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string',
+        $user = $request->user();
+
+        abort_unless($user?->isStudent(), 403);
+        abort_unless($course->isPublished(), 404);
+        abort_unless($enrollmentService->isEnrolled($user, $course), 403);
+
+        $validated = $request->validate([
+            'rating' => ['required', 'integer', 'min:1', 'max:5'],
+            'comment' => ['nullable', 'string', 'max:2000'],
         ]);
 
-        Review::updateOrCreate(
+        Review::query()->updateOrCreate(
             [
-                'user_id' => Auth::id(),
-                'course_id' => $id,
+                'user_id' => $user->id,
+                'course_id' => $course->id,
             ],
             [
-                'rating' => $request->rating,
-                'comment' => $request->comment,
+                'rating' => $validated['rating'],
+                'comment' => $validated['comment'] ?? null,
             ]
         );
 
-        return back()->with('success', 'Review saved');
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | SHOW REVIEWS FOR A COURSE (OPTIONNEL)
-    |--------------------------------------------------------------------------
-    */
-    public function show($id)
-    {
-        $course = Course::findOrFail($id);
-
-        return view('courses.show', compact('course'));
+        return back()->with('success', 'Merci pour votre avis !');
     }
 }

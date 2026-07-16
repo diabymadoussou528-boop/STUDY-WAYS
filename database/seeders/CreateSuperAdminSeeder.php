@@ -14,15 +14,24 @@ class CreateSuperAdminSeeder extends Seeder
      */
     public function run(): void
     {
-        User::firstOrCreate(
+        $user = User::query()->firstOrCreate(
             ['email' => 'diabymadoussou528@gmail.com'],
             [
                 'name' => 'Super Admin',
-                'password' => Hash::make(env('SUPER_ADMIN_PASSWORD', 'Super@26')),
+                'password' => Hash::make(env('SUPER_ADMIN_PASSWORD', 'Douss123')),
                 'role' => 'admin',
                 'is_super_admin' => true,
                 'is_active' => true,
+                'email_verified_at' => now(),
+                'first_login' => false,
             ]
         );
+
+        $user->forceFill([
+            'is_super_admin' => true,
+            'is_active' => true,
+            'email_verified_at' => $user->email_verified_at ?? now(),
+            'first_login' => false,
+        ])->save();
     }
 }

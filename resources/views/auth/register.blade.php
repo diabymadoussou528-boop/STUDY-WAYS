@@ -281,10 +281,10 @@
             setTimeout(() => ripple.remove(), 600);
         });
 
-        // Submit loading state
+        // Submit loading state — delay disable so the browser can send the POST.
         document.getElementById('registerForm').addEventListener('submit', function() {
             submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Création...';
-            submitBtn.disabled = true;
+            submitBtn.setAttribute('aria-busy', 'true');
         });
     </script>
 </body>

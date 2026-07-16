@@ -67,6 +67,17 @@ test('student can chat with ai tutor and receive response', function () {
     makeStudentPremium($student);
 
     Http::fake([
+        'generativelanguage.googleapis.com/*' => Http::response([
+            'candidates' => [
+                [
+                    'content' => [
+                        'parts' => [
+                            ['text' => 'En Python, une boucle for itère sur une séquence.'],
+                        ],
+                    ],
+                ],
+            ],
+        ]),
         'api.groq.com/*' => Http::response([
             'choices' => [
                 ['message' => ['content' => 'En Python, une boucle for itère sur une séquence.']],

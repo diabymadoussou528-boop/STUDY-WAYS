@@ -167,19 +167,30 @@
     const heroShapes = hero?.querySelectorAll('.hero-shape');
 
     if (hero && heroImage && window.matchMedia('(pointer: fine)').matches) {
+        let rafId = null;
+
         hero.addEventListener('mousemove', (e) => {
             const rect = hero.getBoundingClientRect();
             const x = (e.clientX - rect.left) / rect.width - 0.5;
             const y = (e.clientY - rect.top) / rect.height - 0.5;
 
-            heroImage.style.transform = `translate(${x * 12}px, ${y * 12}px)`;
-            heroShapes?.forEach((shape, i) => {
-                const factor = (i + 1) * 8;
-                shape.style.transform = `translate(${x * factor}px, ${y * factor}px)`;
+            if (rafId) {
+                cancelAnimationFrame(rafId);
+            }
+
+            rafId = requestAnimationFrame(() => {
+                heroImage.style.transform = `translate3d(${x * 12}px, ${y * 12}px, 0)`;
+                heroShapes?.forEach((shape, i) => {
+                    const factor = (i + 1) * 8;
+                    shape.style.transform = `translate3d(${x * factor}px, ${y * factor}px, 0)`;
+                });
             });
         });
 
         hero.addEventListener('mouseleave', () => {
+            if (rafId) {
+                cancelAnimationFrame(rafId);
+            }
             heroImage.style.transform = '';
             heroShapes?.forEach((shape) => {
                 shape.style.transform = '';

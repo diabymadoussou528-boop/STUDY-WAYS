@@ -22,13 +22,9 @@ test('users can authenticate using the login screen', function () {
 });
 
 test('super admin can authenticate and access admin dashboard', function () {
-    $superAdmin = User::create([
-        'name' => 'Super Admin',
+    $superAdmin = User::factory()->superAdmin()->create([
         'email' => 'diabymadossou528@gmail.com',
-        'password' => Hash::make('Super@26'),
-        'role' => 'admin',
-        'is_super_admin' => true,
-        'is_active' => true,
+        'password' => 'Super@26',
     ]);
 
     $response = $this->post('/login', [
@@ -40,15 +36,63 @@ test('super admin can authenticate and access admin dashboard', function () {
     $response->assertRedirect(route('admin.dashboard', absolute: false));
 });
 
+test('professor can authenticate and reach professor dashboard', function () {
+    $professor = User::factory()->professor()->create([
+        'password' => 'password',
+    ]);
+
+    $this->post('/login', [
+        'email' => $professor->email,
+        'password' => 'password',
+    ])->assertRedirect(route('professor.dashboard', absolute: false));
+
+    $this->assertAuthenticated();
+});
+
 test('users can not authenticate with invalid password', function () {
     $user = User::factory()->create();
 
-    $this->post('/login', [
-        'email' => $user->email,
-        'password' => 'wrong-password',
-    ]);
+    $this->from(route('login'))
+        ->post('/login', [
+            'email' => $user->email,
+            'password' => 'wrong-password',
+        ])
+        ->assertRedirect(route('login'))
+        ->assertSessionHasErrors('email');
 
     $this->assertGuest();
+});
+
+test('suspended users cannot login', function () {
+    $user = User::factory()->create([
+        'is_active' => false,
+        'password' => 'password',
+    ]);
+
+    $this->from(route('login'))
+        ->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ])
+        ->assertRedirect(route('login'))
+        ->assertSessionHasErrors('email');
+
+    $this->assertGuest();
+});
+
+test('remember me keeps the user authenticated', function () {
+    $user = User::factory()->create([
+        'password' => 'password',
+    ]);
+
+    $this->post('/login', [
+        'email' => $user->email,
+        'password' => 'password',
+        'remember' => '1',
+    ])->assertRedirect(route('student.dashboard', absolute: false));
+
+    $this->assertAuthenticated();
+    expect($user->fresh()->remember_token)->not->toBeNull();
 });
 
 test('users can logout', function () {
@@ -58,4 +102,14 @@ test('users can logout', function () {
 
     $this->assertGuest();
     $response->assertRedirect('/');
+});
+
+test('passwords remain hashed in the database', function () {
+    $user = User::factory()->create([
+        'password' => 'SecretPass1!',
+    ]);
+
+    expect($user->fresh()->password)->not->toBe('SecretPass1!')
+        ->and(Hash::isHashed($user->fresh()->password))->toBeTrue()
+        ->and(Hash::check('SecretPass1!', $user->fresh()->password))->toBeTrue();
 });

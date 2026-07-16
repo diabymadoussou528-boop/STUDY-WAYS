@@ -172,7 +172,6 @@
         // Loading state
         document.getElementById('resetForm').addEventListener('submit', function () {
             submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Mise à jour...';
-            submitBtn.disabled = true;
         });
     </script>
 </body>

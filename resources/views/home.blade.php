@@ -15,6 +15,8 @@
     <link rel="stylesheet" href="{{ asset('css/tokens.css') }}">
     <link rel="stylesheet" href="{{ asset('css/brand.css') }}">
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/course-card.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/course-experience.css') }}">
     <link rel="stylesheet" href="{{ asset('css/course-search.css') }}">
 </head>
 <body>
@@ -254,36 +256,36 @@
 
         <!-- ─── COURSES CATALOG ─── -->
         <section class="courses-catalog reveal" id="catalogue">
-            <h2 class="courses-heading section-title-center">Nos cours les plus populaires</h2>
-            <div class="courses-heading-line"></div>
-            <p class="section-lead">Des formations pratiques et reconnues, animées par des experts du terrain.</p>
-            <div class="courses-grid reveal-stagger">
-                @forelse($featuredCourses as $course)
-                <article class="course-card">
-                    <div class="course-thumb" style="background-image:url('{{ $course->thumbnailUrl() }}');background-size:cover;background-position:center;">
-                        @if($course->is_premium_only)
-                            <span class="course-badge">Premium</span>
-                        @elseif($course->enrollments_count > 10)
-                            <span class="course-badge">Populaire</span>
-                        @endif
-                        <div class="course-thumb-inner">
-                            <span class="thumb-tag">{{ $course->category?->name ?? 'Cours' }}</span>
-                            <small>{{ $course->user?->name }}</small>
+            <div class="sw-section-shell">
+                <div class="sw-home-catalog-head">
+                    <div class="sw-home-catalog-copy">
+                        <h2>Nos cours les plus populaires</h2>
+                        <p>Une vitrine premium inspirée des plateformes e-learning modernes, alimentée par vos vrais cours, vos vraies miniatures et vos formateurs existants.</p>
+                    </div>
+                    <div class="sw-home-catalog-stats">
+                        <div class="sw-home-catalog-stat">
+                            <strong>{{ $courseCount }}</strong>
+                            <span>Cours publiés</span>
+                        </div>
+                        <div class="sw-home-catalog-stat">
+                            <strong>{{ $featuredCourses->count() }}</strong>
+                            <span>Mis en avant</span>
                         </div>
                     </div>
-                    <div class="course-body">
-                        <h3>{{ $course->title }}</h3>
-                        <p class="course-stars">★★★★★ <span>({{ number_format($course->reviews_avg_rating ?? 4.5, 1) }})</span></p>
-                        <p class="course-desc">{{ Str::limit($course->short_description ?? $course->description, 120) }}</p>
-                        <a href="{{ route('courses.show', $course) }}" class="btn btn-details">Détails du cours</a>
+                </div>
+
+                <div class="sw-course-showcase">
+                    <div class="sw-courses-grid reveal-stagger">
+                        @forelse($featuredCourses as $course)
+                            <x-course-card :course="$course" cta-label="Voir les détails" />
+                        @empty
+                            <p class="sw-empty-state" style="grid-column:1/-1;">Aucun cours publié pour le moment.</p>
+                        @endforelse
                     </div>
-                </article>
-                @empty
-                <p style="text-align:center;grid-column:1/-1;color:#666;">Aucun cours publié pour le moment.</p>
-                @endforelse
-            </div>
-            <div style="text-align:center;margin-top:40px;">
-                <a href="{{ route('catalog.index') }}" class="btn btn-outline" style="padding:12px 36px;">Voir tout le catalogue</a>
+                    <div style="text-align:center;">
+                        <a href="{{ route('catalog.index') }}" class="btn btn-outline" style="padding:12px 36px;">Voir tout le catalogue</a>
+                    </div>
+                </div>
             </div>
         </section>
 

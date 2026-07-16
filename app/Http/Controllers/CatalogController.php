@@ -12,6 +12,8 @@ class CatalogController extends Controller
     {
         $query = request('q');
         $categorySlug = request('category');
+        $difficulty = request('difficulty');
+        $sort = request('sort', 'recent');
 
         $courses = Course::query()
             ->published()
@@ -29,12 +31,16 @@ class CatalogController extends Controller
                         ->orWhereHas('category', fn ($cat) => $cat->whereRaw('LOWER(name) LIKE ?', [$like]));
                 });
             })
-            ->latest('published_at')
+            ->when($difficulty, fn ($q) => $q->where('difficulty', $difficulty))
+            ->when($sort === 'popular', fn ($q) => $q->orderByDesc('enrollments_count')->orderByDesc('published_at'))
+            ->when($sort === 'rating', fn ($q) => $q->orderByDesc('reviews_avg_rating')->orderByDesc('reviews_count'))
+            ->when($sort === 'title', fn ($q) => $q->orderBy('title'))
+            ->when(! in_array($sort, ['popular', 'rating', 'title'], true), fn ($q) => $q->latest('published_at'))
             ->paginate(12)
             ->withQueryString();
 
         $categories = Category::query()->withCount(['courses' => fn ($q) => $q->published()])->get();
 
-        return view('courses.catalog-index', compact('courses', 'categories', 'query'));
+        return view('courses.catalog-index', compact('courses', 'categories', 'query', 'sort', 'difficulty', 'categorySlug'));
     }
 }

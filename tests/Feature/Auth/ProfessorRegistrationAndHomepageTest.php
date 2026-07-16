@@ -25,7 +25,7 @@ test('professor registration stores specialization', function () {
             'password_confirmation' => 'password',
             'role' => 'professor',
             'specialization' => 'Laravel / PHP',
-        ])->assertRedirect(route('dashboard', absolute: false));
+        ])->assertRedirect(route('professor.dashboard', absolute: false));
 
     $professor = User::query()->where('email', 'prof-laravel@example.com')->first();
 
@@ -42,7 +42,7 @@ test('student registration does not require specialization', function () {
             'password' => 'password',
             'password_confirmation' => 'password',
             'role' => 'student',
-        ])->assertRedirect(route('dashboard', absolute: false));
+        ])->assertRedirect(route('student.dashboard', absolute: false));
 
     expect(User::query()->where('email', 'student-spec@example.com')->value('specialization'))->toBeNull();
 });

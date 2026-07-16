@@ -85,7 +85,7 @@ test('guest can view course detail page with dynamic data', function () {
         ->assertSee('Introduction & démarrage')
         ->assertSee('Installation et configuration')
         ->assertSee('Super cours React !')
-        ->assertSee('REACTJS');
+        ->assertSee('ReactJS');
 });
 
 test('guest can access preview lesson without enrollment', function () {
@@ -138,7 +138,7 @@ test('enrolled student can access learn page and complete lesson', function () {
         ->assertSessionHas('success');
 });
 
-test('enrolled student sees start course button on detail page', function () {
+test('enrolled student sees continue learning button on detail page', function () {
     $student = User::factory()->create(['role' => 'student']);
     $course = courseDetailPublishedCourse();
     courseDetailWithCurriculum($course);
@@ -152,7 +152,7 @@ test('enrolled student sees start course button on detail page', function () {
     $this->actingAs($student)
         ->get(route('courses.show', $course))
         ->assertSuccessful()
-        ->assertSee('Commencer le cours');
+        ->assertSee('Continuer l\'apprentissage', false);
 });
 
 test('draft course is not visible to guests', function () {
